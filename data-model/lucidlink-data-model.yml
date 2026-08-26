@@ -1,0 +1,236 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/lucidlink-service-api.json ($ref graph + id-reference fields) enriched from https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
+description: Entity graph of the LucidLink public Service API, plus the resource nouns the self-hosted
+  Management API and the v2 web service add on top of it.
+root_entities:
+- Domain
+- Filespace
+- BillingPeriod
+- Invoice
+entities:
+- name: BadRequest
+  required:
+  - status
+  - message
+  field_count: 2
+  fields:
+  - message
+  - status
+- name: BillingPeriod
+  required:
+  - start
+  - end
+  - subscriptionStatus
+  - amountDue
+  - amountDueForecast
+  - currency
+  field_count: 8
+  fields:
+  - amountDue
+  - amountDueForecast
+  - currency
+  - end
+  - filespaceBreakdown
+  - start
+  - subscriptionStatus
+  - trialDays
+- name: Card
+  required:
+  - numberLast4
+  - expiryMonth
+  - expiryYear
+  field_count: 3
+  fields:
+  - expiryMonth
+  - expiryYear
+  - numberLast4
+- name: Conflict
+  required:
+  - status
+  - message
+  field_count: 2
+  fields:
+  - message
+  - status
+- name: Domain
+  required:
+  - name
+  field_count: 2
+  fields:
+  - id
+  - name
+- name: Filespace
+  required:
+  - domain
+  - name
+  - storage
+  field_count: 9
+  fields:
+  - domain
+  - id
+  - name
+  - stats
+  - status
+  - storage
+  - subscriptionType
+  - usersCount
+  - version
+- name: FilespaceLineItem
+  required:
+  - filespace
+  - amountDue
+  - usageByDimension
+  - isDeleted
+  - name
+  - storageOwner
+  field_count: 8
+  fields:
+  - amountDue
+  - filespace
+  - isDeleted
+  - name
+  - storageOwner
+  - storageProvider
+  - subscriptionType
+  - usageByDimension
+- name: FilespaceLineItemWithForecast
+  required: []
+  field_count: 0
+  fields: []
+- name: FilespaceStats
+  required:
+  - filespaceSize
+  field_count: 8
+  fields:
+  - deleteRequestCount
+  - filespaceSize
+  - getDataSize
+  - getRequestCount
+  - listRequestCount
+  - putDataSize
+  - putRequestCount
+  - usedStorage
+- name: FilespaceStorage
+  required:
+  - provider
+  field_count: 5
+  fields:
+  - bucket
+  - endpoint
+  - owner
+  - provider
+  - region
+- name: FilespaceUsage
+  required:
+  - usage
+  - dimension
+  field_count: 2
+  fields:
+  - dimension
+  - usage
+- name: Invoice
+  required:
+  - id
+  - date
+  - lineDescriptions
+  - amountDue
+  - currency
+  - paymentStatus
+  - pdfUrl
+  - periodStart
+  - periodEnd
+  field_count: 10
+  fields:
+  - amountDue
+  - currency
+  - date
+  - filespaceBreakdown
+  - id
+  - lineDescriptions
+  - paymentStatus
+  - pdfUrl
+  - periodEnd
+  - periodStart
+- name: NotFound
+  required:
+  - status
+  - message
+  field_count: 2
+  fields:
+  - message
+  - status
+- name: PaymentDetails
+  required: []
+  field_count: 3
+  fields:
+  - card
+  - description
+  - paymentSourceToken
+- name: UnprocessableEntity
+  required:
+  - status
+  - message
+  field_count: 2
+  fields:
+  - message
+  - status
+relationships:
+- from: Filespace
+  to: FilespaceStorage
+  type: has_one
+  via: storage
+- from: PaymentDetails
+  to: Card
+  type: has_one
+  via: card
+- from: BillingPeriod
+  to: FilespaceLineItemWithForecast
+  type: has_many
+  via: filespaceBreakdown
+- from: Invoice
+  to: FilespaceLineItem
+  type: has_many
+  via: filespaceBreakdown
+- from: FilespaceLineItem
+  to: FilespaceUsage
+  type: has_many
+  via: usageByDimension
+- from: FilespaceLineItemWithForecast
+  to: FilespaceLineItem
+  type: extends
+  via: allOf
+identifier_conventions:
+- entity: Filespace
+  id: string id; the Management API uses a UUID (example dcb2e737-1bd7-4a81-bf3b-03f6789bb8a6)
+- entity: Filesystem entry
+  id: colon-delimited internal id, e.g. 103:3 or 4294967294:0 (the filespace root); URL-encoded as 103%3A3
+    in paths
+- entity: Member / Group
+  id: principalId — members and groups share one principal identifier space, which is why permissions
+    take a single principalId
+- entity: Service account token
+  id: 'documented prefix sa_live:'
+entities_documented_but_unspecified:
+- entity: Member
+  api: Management API v1 / Web Service v2
+  note: CRUD documented in the KB; no published schema.
+- entity: Group
+  api: Management API v1 / Web Service v2
+  note: CRUD + membership documented; no published schema.
+- entity: Permission
+  api: Management API v1
+  note: Fields path, permissions[], principalId appear in documented request bodies only.
+- entity: Entry (file/directory)
+  api: Management API v1
+  note: parentId, name, type documented in the create-directory example only.
+- entity: DirectLink
+  api: Management API v1
+  note: Generated per entry id or path; no schema published.
+- entity: Workspace
+  api: Web Service v2
+  note: Root of the v2 tree; no schema published.
+- entity: DataStore / ExternalFile
+  api: LucidLink Connect
+  note: Reachable only through the SDK and MCP tools; no HTTP schema published.
+render: null

@@ -1,0 +1,114 @@
+generated: '2026-08-25'
+method: searched
+source: https://www.lucidlink.com/pricing
+currency: USD
+billing_model: per member per month, with shared workspace storage pooled across members
+billing_periods: [monthly, annual]
+annual_discount: Save 15% with annual billing (stated on the Starter tier)
+trial: 30-day free trial, no credit card required
+marketplace: Business and Enterprise can be paid through AWS Marketplace
+plan_count: 3
+plans:
+- name: Starter
+  price: 7
+  currency: USD
+  period: month
+  unit: member
+  description: Effortless file collaboration for small projects and teams getting started.
+  included_storage: 100 GB per member, pooled across the workspace
+  overage: $7 per 100 GB per month
+  limits:
+    members: 10
+    storage: 1 TB
+    file_size: up to storage limit
+    upload_speed: unlimited
+    snapshots: none
+    multiple_filespaces: false
+    multiple_admins: false
+    sso: false
+    user_groups: false
+    global_settings: false
+    byo_storage: false
+    audit_trail: false
+    lucidlink_connect: false
+    teamcache: false
+    developer_platform: false
+  storage_provider: AWS
+  support: Slack community
+- name: Business
+  price: 27
+  list_price: 32
+  currency: USD
+  period: month
+  unit: member
+  description: Instant access to shared projects of any size for distributed teams.
+  included_storage: 400 GB per member, pooled across the workspace
+  overage: $8 per 100 GB per month
+  limits:
+    members: 25
+    storage: unlimited (best for up to 10 TB)
+    file_size: up to storage limit
+    upload_speed: unlimited
+    snapshots: 30 days
+    multiple_filespaces: true
+    multiple_admins: true
+    sso: true
+    user_groups: true
+    global_settings: false
+    byo_storage: false
+    audit_trail: false
+    lucidlink_connect: false
+    teamcache: false
+    developer_platform: true
+  storage_provider: AWS
+  support: Standard
+- name: Enterprise
+  price: null
+  price_note: '"Let''s talk" — contact sales for a customized plan'
+  currency: USD
+  period: month
+  unit: member
+  description: Flexible plans for large teams and complex datasets.
+  included_storage: custom
+  overage: custom
+  limits:
+    members: unlimited
+    storage: unlimited (contact sales above 25 TB)
+    file_size: up to storage limit
+    upload_speed: unlimited
+    snapshots: unlimited
+    multiple_filespaces: true
+    multiple_admins: true
+    sso: true
+    user_groups: advanced
+    global_settings: true
+    byo_storage: true
+    audit_trail: true
+    lucidlink_connect: add-on
+    teamcache: add-on
+    developer_platform: true
+  storage_provider: AWS or bring your own S3-compatible storage
+  support: Premium, 24/7, with tailored onboarding
+developer_platform_availability:
+  source: https://support.lucidlink.com/hc/en-us/articles/44957651982989-LucidLink-Developer-Platform
+  python_sdk: Business and Enterprise, plus Trial
+  lucidlink_api: Business and Enterprise, plus Trial
+  lucidlink_connect: Enterprise add-on, plus Trial
+  service_accounts: Business and Enterprise (Collaborator Service Accounts beta is available on all plans including Trial, per build 3.7.8584)
+  mcp_server: >-
+    Requires a service-account token, so it inherits the same plan gate. The MCP page states
+    that existing LucidLink customers still need a free trial account to access Developer
+    Tools.
+billing_notes:
+- Invoices are calculated on average storage used across all filespaces in the workspace over the month.
+- Storage is measured decimal (1 TB = 1000 GB).
+- Overage is billed at the end of each month when pooled workspace storage exceeds the included allowance.
+- Charged per member whether or not data is stored.
+- Upgrades take effect immediately with prorated billing; downgrades may require contacting support.
+- Taxes/VAT/GST are added at invoicing, not shown in listed prices.
+programmatic_billing:
+  note: >-
+    Billing is also readable through the API — openapi/lucidlink-service-api.json exposes
+    getCurrentPeriod, getInvoices, getInvoiceBreakdownPerFilespace, getPaymentDetails and
+    setPaymentDetails, with usage broken down per filespace by the dimensions
+    ManagedCapacity and FilespaceUsers.

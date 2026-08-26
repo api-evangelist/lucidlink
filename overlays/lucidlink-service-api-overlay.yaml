@@ -1,0 +1,94 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the LucidLink Service API
+  version: 1.0.0
+extends: ../openapi/lucidlink-service-api.json
+x-provenance:
+  generated: '2026-08-25'
+  method: generated
+  source: >-
+    Derived from openapi/lucidlink-service-api.json (saved verbatim from
+    https://api.lucidlink.com/docs/api/v1/) plus LucidLink's own published documentation.
+    This overlay records API Evangelist's enhancements ONLY — it never mutates the original
+    document, and none of it is fed back as if LucidLink had published it.
+actions:
+- target: $.info
+  description: Record the real base URL and the ambiguity between it and the published example.
+  update:
+    x-api-evangelist-base-url: https://api.lucidlink.com/api/v1
+    x-api-evangelist-base-url-note: >-
+      The document declares basePath /api/v1 and no host. info.description's worked example
+      instead uses https://api.lucidlink.com/v1. Both forms were probed anonymously on
+      2026-08-25 and both returned 401 rather than 404, so they route to the same service.
+    x-api-evangelist-credential-issuance: >-
+      Not self-service. Client credentials are issued on request via
+      support+ticket@lucidlink.com or the support portal.
+- target: $.info
+  description: Add contact and licence-style metadata the original omits.
+  update:
+    contact:
+      name: LucidLink Support
+      url: https://support.lucidlink.com/hc/en-us
+      email: support+ticket@lucidlink.com
+    termsOfService: https://www.lucidlink.com/terms
+- target: $
+  description: Record the servers block a converted OpenAPI 3.x document would carry.
+  update:
+    x-api-evangelist-servers:
+    - url: https://api.lucidlink.com/api/v1
+      description: LucidLink-hosted public Service API
+- target: $.securityDefinitions.standard
+  description: Document the scope situation explicitly rather than leaving an empty scopes map implied.
+  update:
+    x-api-evangelist-scopes-note: >-
+      No scopes are declared and none are documented. A client credential is
+      all-or-nothing across domains, filespaces and billing, including
+      setPaymentDetails. See scopes/lucidlink-scopes.yml.
+- target: $.paths['/billing/payment'].patch
+  description: Flag the highest-consequence write on the API.
+  update:
+    x-api-evangelist-consequence: high
+    x-api-evangelist-reversibility: >-
+      No reversal operation. setPaymentDetails overwrites the payment instrument on the
+      account; the API offers no undo and no history. See conventions/lucidlink-conventions.yml.
+- target: $.paths['/filespaces'].post
+  description: Record the missing retry-safety guarantee.
+  update:
+    x-api-evangelist-idempotent: false
+    x-api-evangelist-retry-note: >-
+      No Idempotency-Key is supported. A retried createFilespace after a timeout may
+      provision a second filespace; the only guard is the declared 409 on a duplicate name.
+- target: $.paths['/filespaces/{id}'].delete
+  description: Record irreversibility.
+  update:
+    x-api-evangelist-consequence: destructive
+    x-api-evangelist-reversibility: >-
+      No API-level reversal. Recovery is only possible from a filespace snapshot taken
+      beforehand, restored from the LucidLink client — and snapshots are unavailable on the
+      Starter plan.
+- target: $.paths['/domains/{id}'].delete
+  description: Record irreversibility.
+  update:
+    x-api-evangelist-consequence: destructive
+    x-api-evangelist-reversibility: 'Re-creatable via createDomain; 409 guards a domain still in use.'
+- target: $
+  description: Record the response classes the document does not declare anywhere.
+  update:
+    x-api-evangelist-undeclared-responses:
+      note: >-
+        14 of 14 operations declare only 2xx and 4xx. No operation declares 401, 403, 429 or
+        any 5xx, although the live API returns 401 on every unauthenticated call. Recorded
+        here rather than injected into the original.
+      observed_401_body: '{"status":401,"message":"Illegal request"}'
+- target: $
+  description: Cross-link the derived artifacts built from this document.
+  update:
+    x-api-evangelist-artifacts:
+      errors: errors/lucidlink-problem-types.yml
+      data_model: data-model/lucidlink-data-model.yml
+      authentication: authentication/lucidlink-authentication.yml
+      scopes: scopes/lucidlink-scopes.yml
+      conventions: conventions/lucidlink-conventions.yml
+      conformance: conformance/lucidlink-conformance.yml
+      tool_crosswalk: mcp/lucidlink-tool-crosswalk.yml
+      skills: skills/_index.yml

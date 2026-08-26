@@ -1,0 +1,150 @@
+generated: '2026-08-25'
+method: probed
+source: live GET probes of /.well-known/* on every LucidLink host in apis.yml, 2026-08-25
+summary: >-
+  LucidLink serves no /.well-known document on any host it controls. Every path below was
+  probed and every one missed. Two results need reading carefully rather than counting.
+  app.lucidlink.com answers HTTP 200 with the same 2,573-byte single-page-app HTML shell
+  for EVERY /.well-known path (and for /openapi.json, /llms.txt and anything else) — that
+  is an SPA catch-all, not a served document, and it is recorded as a miss. And
+  status.lucidlink.com does serve a real /.well-known/security.txt, but it is Atlassian
+  Statuspage's own file (Contact: https://www.atlassian.com/...), published by Atlassian
+  for the hosting platform, not by LucidLink — so it is recorded here and deliberately not
+  credited to LucidLink or given a SecurityTxt pointer.
+hosts:
+- host: api.lucidlink.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: www.lucidlink.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/api-catalog
+    status: 404
+    file: null
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: auth.lucidlink.com
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 404
+    file: null
+    note: >-
+      Notable miss. auth.lucidlink.com is the real OAuth2 token endpoint named in
+      LucidLink's own Swagger document (https://auth.lucidlink.com/oauth2/token), and the
+      server answers with a JSON error of its own ("This URL doesn't exist on the
+      authorization server") rather than a generic 404 — so the authorization server is
+      there and simply publishes no RFC 8414 / OIDC discovery metadata.
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    file: null
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: app.lucidlink.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/api-catalog
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/agent-card.json
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+  - path: /.well-known/agent.json
+    status: 200
+    file: null
+    note: SPA catch-all — HTML shell, not a document. Treated as a miss.
+- host: support.lucidlink.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    file: null
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+- host: status.lucidlink.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    file: null
+    note: >-
+      Real RFC 9116 document, but it is Atlassian Statuspage's, not LucidLink's — the
+      Contact line points at atlassian.com. Not saved and not credited to LucidLink.
+  - path: /.well-known/agent-card.json
+    status: 404
+    file: null
+  - path: /.well-known/agent.json
+    status: 404
+    file: null
+other_probes:
+- url: https://www.lucidlink.com/llms.txt
+  status: 404
+- url: https://api.lucidlink.com/llms.txt
+  status: 404
+- url: https://www.lucidlink.com/robots.txt
+  status: 200
+  note: 'Serves: "User-Agent: * / Allow: / / Disallow: /*.pdf" plus a sitemap reference. No AI-specific directives.'
+pointer_decision: >-
+  No WellKnown pointer and no SecurityTxt pointer emitted in apis.yml. Nothing LucidLink
+  serves at a /.well-known path returned a real document, and a pointer would assert a
+  surface the provider does not publish.

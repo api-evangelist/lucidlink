@@ -1,0 +1,170 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  openapi/lucidlink-service-api.json,
+  https://support.lucidlink.com/hc/en-us/articles/38861860730637-Understanding-SCIM-Integration-in-LucidLink,
+  https://support.lucidlink.com/hc/en-us/sections/31125114361741-Single-Sign-On-SAML,
+  https://www.lucidlink.com/security, https://trust.lucidlink.com/
+description: >-
+  Cross-cutting and domain standards LucidLink's contracts and documentation actually
+  declare. Each entry states whether it conforms and points at the evidence. Absence is
+  recorded as `conforms: false`, not left blank.
+standards:
+- id: oauth2
+  name: OAuth 2.0
+  conforms: true
+  evidence: >-
+    openapi/lucidlink-service-api.json securityDefinitions.standard is
+    `{"type":"oauth2","flow":"application","tokenUrl":"https://auth.lucidlink.com/oauth2/token"}`
+    — a client-credentials grant applied globally via a top-level `security` block. Live
+    token endpoint confirmed reachable (HTTP 400 on a bare GET, i.e. present and demanding
+    correct parameters).
+  gaps: No scopes are declared, so every client credential is all-or-nothing.
+- id: rfc6750
+  name: OAuth 2.0 Bearer Token Usage
+  conforms: partial
+  evidence: >-
+    The Management API and the v2 web service both use `Authorization: Bearer <token>` as
+    documented. The v1 Service API's own published example sends the raw access token with
+    NO Bearer prefix (`-H "Authorization: $ACCESS_TOKEN"`), which is not RFC 6750 form.
+- id: rfc8414
+  name: OAuth 2.0 Authorization Server Metadata
+  conforms: false
+  evidence: >-
+    https://auth.lucidlink.com/.well-known/oauth-authorization-server returned 404 with the
+    server's own JSON error body on 2026-08-25 — the authorization server exists and
+    publishes no discovery document.
+- id: oidc
+  name: OpenID Connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returned 404 on every LucidLink host probed.
+- id: scim
+  name: SCIM 2.0 (System for Cross-domain Identity Management)
+  conforms: true
+  domain_standard: true
+  evidence: >-
+    LucidLink documents SCIM provisioning as a supported integration and names Okta's "SCIM
+    2.0 App" template as the recommended configuration, with support for Azure AD, Google
+    Workspace, JumpCloud, OneLogin and Ping Identity. User and group provisioning, the
+    deactivated-user state and IdP-owned group membership are all documented behaviours.
+    https://support.lucidlink.com/hc/en-us/articles/38861860730637-Understanding-SCIM-Integration-in-LucidLink
+    and the "SCIM provisioning" control on https://www.lucidlink.com/security
+  gaps: >-
+    LucidLink publishes no SCIM service-provider-configuration URL, no schema URN list and
+    no /scim/v2 base URL, so the conformance is asserted in prose and demonstrated through
+    IdP templates rather than through a fetchable SCIM contract. Google Workspace group
+    provisioning is explicitly not supported.
+- id: saml2
+  name: SAML 2.0
+  conforms: true
+  domain_standard: true
+  evidence: >-
+    Single Sign-On over SAML 2.0 with published per-IdP integration guides for Microsoft
+    Entra ID, Google and Okta
+    (https://support.lucidlink.com/hc/en-us/sections/31125114361741-Single-Sign-On-SAML), and
+    "SSO (SAML 2.0) — Okta, Azure AD, Google Workspace and OneLogin supported" on
+    https://www.lucidlink.com/security. LucidLink also acts as the IdP for its own Zendesk
+    support portal as of build 3.7.8584.
+- id: s3
+  name: Amazon S3 API (object storage interface)
+  conforms: true
+  domain_standard: true
+  evidence: >-
+    LucidLink filespaces are built on S3 object storage, Enterprise supports bring-your-own
+    S3-compatible storage, and LucidLink Connect links external S3 objects into a filespace
+    (register_data_store / link_external_file in mcp/lucidlink-mcp.yml). `lucid rekey-s3`
+    and `lucid rekey-azure` are published CLI commands.
+  note: >-
+    This is the domain standard that actually matters in LucidLink's market — a buyer who
+    already speaks S3 can point their existing bucket at a filespace with no bespoke
+    connector.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  domain_standard: true
+  evidence: >-
+    First-party MCP server published as lucidlink-mcp on PyPI, pinning mcp==2.0.0, exposing
+    47 enumerated tools with per-tool read_only/additive/destructive/stateful annotations
+    (the MCP tool-annotations feature). Registration commands published for Claude Code,
+    Codex and Cursor. See mcp/lucidlink-mcp.yml.
+  gaps: >-
+    stdio only — no vendor-hosted remote endpoint, so an agent cannot reach LucidLink
+    without a human first installing and configuring the server on a machine.
+- id: posix
+  name: POSIX filesystem semantics (advisory byte-range locking, hard links)
+  conforms: partial
+  domain_standard: true
+  evidence: >-
+    Whole-file and byte-range advisory locks are exposed through the client, the SDK
+    (lock_byte_range) and MCP tools. Hard links shipped for Desktop, Web and Mobile on
+    filespace format 3.8+ in build 3.8.8694 (2026-08-25), though driver-native link
+    generation is Linux-only at release and a cross-platform link-creation API is stated as
+    future work.
+- id: rfc9457
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    No application/problem+json is produced or declared. Three different vendor JSON error
+    envelopes are in use across the three APIs — see errors/lucidlink-problem-types.yml.
+- id: rfc8594
+  name: RFC 8594 Sunset header
+  conforms: false
+  evidence: No Sunset or Deprecation header observed and no deprecation policy published.
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: >-
+    /.well-known/security.txt returned 404 on every LucidLink-controlled host. The 200 at
+    status.lucidlink.com is Atlassian Statuspage's own file, not LucidLink's. See
+    well-known/lucidlink-well-known.yml.
+- id: pagination
+  name: Documented pagination
+  conforms: partial
+  evidence: >-
+    A `limit` parameter is documented on Management API directory listings only. The public
+    Service API returns unbounded arrays with no pagination parameter declared.
+- id: idempotency
+  name: Idempotent request keys
+  conforms: false
+  evidence: No idempotency key, header or retention policy appears in any LucidLink documentation or spec.
+- id: openapi
+  name: OpenAPI / Swagger
+  conforms: partial
+  evidence: >-
+    A valid Swagger 2.0 document is published and served at
+    https://api.lucidlink.com/docs/api/v1/ and saved verbatim to
+    openapi/lucidlink-service-api.json. It is Swagger 2.0, not OpenAPI 3.x, and it covers
+    only the public Service API — the Management API's OpenAPI is generated inside the
+    customer's own container and the v2 web service has no spec at all.
+- id: asyncapi
+  name: AsyncAPI / event-driven contract
+  conforms: false
+  evidence: >-
+    No event, streaming or webhook surface was found. There is no webhook registry, no
+    /asyncapi.yaml, and the only change-notification mechanism is polling the filespace's
+    own NDJSON audit trail (subscribe_changes / poll_changes in the MCP server).
+- id: graphql
+  name: GraphQL
+  conforms: false
+  evidence: https://api.lucidlink.com/graphql returned 404.
+compliance_certifications:
+  detail: security/lucidlink-trust-center.yml
+  published:
+  - SOC 2 Type I
+  - SOC 2 Type II
+  - ISO 27001
+  - TPN (Trusted Partner Network)
+  - TPN Gold Shield
+  - GDPR
+  - CCPA
+  note: >-
+    TPN is the domain-specific one: the Trusted Partner Network is the Motion Picture
+    Association's content-security programme, and TPN Gold Shield is the credential a media
+    and entertainment buyer actually asks for. For LucidLink's primary market that is worth
+    more than a generic security badge.
+encryption:
+  model: zero-knowledge, customer-held keys
+  cipher: AES-256-GCM with tamper detection
+  scope: encrypted on the device before transmission, in transit, and at rest
+  key_granularity: per-file and per-folder encryption keys
+  evidence: https://www.lucidlink.com/security

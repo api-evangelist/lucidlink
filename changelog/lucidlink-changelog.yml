@@ -1,0 +1,201 @@
+generated: '2026-08-25'
+method: searched
+source: https://support.lucidlink.com/hc/en-us/sections/31125638256269-Release-notes (Zendesk Help Center
+  API, fetched 2026-08-25)
+name: LucidLink release notes
+url: https://support.lucidlink.com/hc/en-us/sections/31125638256269-Release-notes
+scheme: 'Dated per-build notes for the LucidLink client/platform, titled "Release notes for build #<n>",
+  carrying an internal semantic build string (e.g. Build 3.8.8694).'
+current_version: 3.8.8694
+current_date: '2026-08-25'
+cadence: Roughly every 1-2 weeks. 34 dated entries published between 2025-01-22 and 2026-08-25.
+entry_count_published: 34
+covers: The LucidLink client and platform. There is no separate changelog for the Service API, the Management
+  API container, the Python SDK or the MCP server — package releases are visible only as PyPI/Docker version
+  bumps.
+breaking_change_marking: None. Entries are grouped as "New Features", "Improvements" and "Bug fixes";
+  no entry in the recent window is marked breaking or carries a deprecation notice.
+secondary_sources:
+- name: Product update blog posts
+  url: https://www.lucidlink.com/blog
+  note: Monthly-ish narrative releases, e.g. /blog/july-2026-release, /blog/may-2026-release, /blog/april-2026-release.
+- name: PyPI release history (lucidlink)
+  url: https://pypi.org/project/lucidlink/#history
+- name: PyPI release history (lucidlink-mcp)
+  url: https://pypi.org/project/lucidlink-mcp/#history
+entries:
+- version: 3.8.8694
+  build: '8694'
+  date: '2026-08-25'
+  title: 'Release notes for build #8694 release Aug 25, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/48388310595469-Release-notes-for-build-8694-release-Aug-25-2026
+  highlights:
+  - Build 3.8.8694
+  - New Features
+  - Hard Links
+  - For more information please see the associated knowledge base article here .
+  breaking: null
+- version: 3.7.8641
+  build: '8641'
+  date: '2026-08-17'
+  title: 'Release notes for build #8641 release Aug 17, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/48190002017933-Release-notes-for-build-8641-release-Aug-17-2026
+  highlights:
+  - Build 3.7.8641
+  - Desktop notifications for connection issues
+  - Bug fixes
+  breaking: null
+- version: 3.7.8584
+  build: '8584'
+  date: '2026-08-08'
+  title: 'Release notes for build #8584 release Aug 08, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/47988266354829-Release-notes-for-build-8584-release-Aug-08-2026
+  highlights:
+  - Build 3.7.8584
+  - New features
+  - Collaborator Service Accounts, Beta
+  - 'Important Notes:'
+  - Service Account creation is available on all plans, including Trial.
+  - Single Sign-On for Support Requests (Zendesk)
+  breaking: null
+- version: 3.7.8540
+  build: '8540'
+  date: '2026-07-25'
+  title: 'Release notes for build #8540 release July 25, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/47639895770765-Release-notes-for-build-8540-release-July-25-2026
+  highlights:
+  - Build 3.7.8540
+  - New Features
+  - Universal Links for macOS
+  - Upgrade Tool enhancements
+  - Filespace admin enhancements
+  - Other improvements
+  - Bug fixes
+  breaking: null
+- version: 3.7.8488
+  build: '8488'
+  date: '2026-07-14'
+  title: 'Release notes for build #8488 release July 14, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/47358587254157-Release-notes-for-build-8488-release-July-14-2026
+  highlights:
+  - Build 3.7.8488
+  - Linux-Only Release
+  - Bug Fixes
+  breaking: null
+- version: 3.7.8468
+  build: '8468'
+  date: '2026-07-11'
+  title: 'Release notes for build #8468 release July 11, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/47303516721677-Release-notes-for-build-8468-release-July-11-2026
+  highlights:
+  - Build 3.7.8468
+  - New Features
+  - Proxy Authentication via Kerberos
+  - 'Important Notes:'
+  - Kerberos proxy authentication is available on Windows only in this release.
+  - Service Account Key Rotation
+  - For full details, check  lucid help rotate-credentials .
+  breaking: null
+- version: 3.7.8426
+  build: '8426'
+  date: '2026-07-04'
+  title: 'Release notes for build #8426 release July 4, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/47137448991117-Release-notes-for-build-8426-release-July-4-2026
+  highlights:
+  - Build 3.7.8426
+  - New Features
+  - 'Python SDK: Multi-Filespace Connections'
+  - Bug fixes
+  - Other Improvements
+  - Stronger 2FA protection
+  - Known issues
+  - 'Azure Object Storage connectivity issues for Linux Desktop Clients:'
+  breaking: null
+- version: 3.7.8387
+  build: '8387'
+  date: '2026-06-27'
+  title: 'Release notes for build #8387 release June 27, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/46970667145485-Release-notes-for-build-8387-release-June-27-2026
+  highlights:
+  - Build 3.7.8387
+  - New Features
+  - Performance Optimizations for Local Cache
+  - Member Deactivation and Reactivation
+  - 'Important Notes:'
+  - Clear Cache
+  - 'What happens when you run it:'
+  - A confirmation prompt will appear before any changes are made.
+  breaking: null
+- version: 3.7.8326
+  build: '8326'
+  date: '2026-06-13'
+  title: 'Release notes for build #8326 release June 13, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/46621754004877-Release-notes-for-build-8326-release-June-13-2026
+  highlights:
+  - Build 3.7.8326
+  - New Features
+  - 'LucidLink Connect: Python SDK Support for HTTP Links'
+  breaking: null
+- version: 3.7.8283
+  build: '8283'
+  date: '2026-05-30'
+  title: 'Release notes for build #8283, release May 30, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/46268776993037-Release-notes-for-build-8283-release-May-30-2026
+  highlights:
+  - Build 3.7.8283
+  - Windows Improvements
+  - Faster reads from local cache
+  - LucidFS driver update
+  - Bug Fixes
+  breaking: null
+- version: 3.7.8252
+  build: '8252'
+  date: '2026-05-16'
+  title: 'Release notes for build #8252, release May 21, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/45905958762125-Release-notes-for-build-8252-release-May-21-2026
+  highlights:
+  - Build 3.7.8252
+  - New Features
+  - Python SDK for Production Filespaces (Beta)
+  - 'Important Notes:'
+  - Headless authentication requires service-account credentials.
+  - LucidLink Connect — Desktop CLI Support
+  - 'Important Notes:'
+  - Automatic Domain Key Storage on Desktop
+  breaking: null
+- version: 3.7.8178
+  build: '8178'
+  date: '2026-04-30'
+  title: 'Release notes for build #8178, release Apr 30, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/45491026579853-Release-notes-for-build-8178-release-Apr-30-2026
+  highlights:
+  - Build 3.7.8178
+  - New Features
+  - Two-Factor Authentication (2FA) for Non-SSO Users
+  - 'Important Notes :'
+  - Password Reset
+  - 'Important Notes :'
+  breaking: null
+- version: 3.7.8073
+  build: '8073'
+  date: '2026-04-09'
+  title: 'Release notes for build #8073, release Apr 09, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/44955961199373-Release-notes-for-build-8073-release-Apr-09-2026
+  highlights:
+  - Build 3.7.8073
+  - Improvements
+  - LucidLink Connect
+  - 'Important notes:'
+  - Bug Fixes
+  breaking: null
+- version: 3.7.8012
+  build: '8012'
+  date: '2026-03-27'
+  title: 'Release notes for build #8012, release Mar 28, 2026'
+  url: https://support.lucidlink.com/hc/en-us/articles/44643526801805-Release-notes-for-build-8012-release-Mar-28-2026
+  highlights:
+  - Build 3.7.8012
+  - Improvements
+  - Bug fixes
+  - Fix decreased performance when streaming data in snapshot mode
+  breaking: null

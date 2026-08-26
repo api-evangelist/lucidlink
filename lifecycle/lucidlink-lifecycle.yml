@@ -1,0 +1,90 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://status.lucidlink.com/ (Atlassian Statuspage, summary API probed 2026-08-25),
+  https://support.lucidlink.com/hc/en-us/sections/31125638256269-Release-notes,
+  https://support.lucidlink.com/hc/en-us/articles/31124791264525-Premium-and-Standard-Support-SLA,
+  https://support.lucidlink.com/hc/en-us/articles/40222376164365-Best-Practices-Operating-the-LucidLink-API-Container,
+  and openapi/lucidlink-service-api.json
+status_page:
+  url: https://status.lucidlink.com/
+  provider: Atlassian Statuspage
+  page_id: rcs31bml7z3j
+  http_status: 200
+  machine_readable: true
+  api: https://status.lucidlink.com/api/v2/summary.json
+  components:
+  - LucidLink (North America)
+  - LucidLink (Latin America)
+  - LucidLink (Asia-Pacific)
+  - LucidLink (Europe)
+  subscribable: true
+  note: >-
+    Regional components, so an incident can be scoped to a geography. Confirmed live on
+    2026-08-25 (updated_at 2026-08-25T22:59:26Z).
+versioning:
+  scheme: URL path version on the HTTP APIs; build-number semver on the client
+  current:
+    service_api: v1
+    management_api: v1
+    web_service: v2
+    client: 3.8.8694
+  policy_published: false
+  note: >-
+    LucidLink publishes no API versioning policy document. The only stated version-control
+    guidance is for the self-hosted container, where the best-practices article tells
+    operators to pin an explicit image tag rather than :latest "to control exactly when you
+    upgrade, avoiding unexpected breaking changes or downtime".
+deprecation:
+  policy_published: false
+  sunset_header: not observed
+  deprecation_header: not observed
+  rfc8594: false
+  deprecated_operations: []
+  deprecated_operations_note: >-
+    No operation in openapi/lucidlink-service-api.json carries `deprecated: true`, and no
+    release-note entry in the recent window announces a deprecation or a removal date.
+  real_deprecation_in_flight: >-
+    LucidLink is in the middle of a genuine platform migration — "LucidLink Classic" is
+    being superseded by the new platform, with a dedicated Upgrade Tool, an entire KB
+    section (Upgrade Tool, 11 articles), a /classic and /classic-vs-new comparison page, and
+    a "LucidLink classic hub". That is the largest deprecation the company is running, and
+    it is documented as a migration programme rather than as a versioned deprecation policy
+    with dated sunsets. No end-of-life date for Classic was found published.
+  pointer_decision: >-
+    No `Deprecation` pointer emitted in apis.yml. The Classic migration is real, but there
+    is no published deprecation POLICY page for the score to point at, and pointing at a
+    migration guide would overstate it.
+sla:
+  published: true
+  url: https://support.lucidlink.com/hc/en-us/articles/31124791264525-Premium-and-Standard-Support-SLA
+  tiers:
+  - name: Standard
+    availability_by_plan: Business
+  - name: Premium
+    availability_by_plan: Enterprise (24/7)
+  uptime_commitment_published: false
+  note: >-
+    The published SLA is a SUPPORT response-time SLA, not an availability/uptime SLA. No
+    uptime percentage commitment was found on the public site, the status page or the
+    pricing page.
+support:
+  channels:
+  - {name: Support center, url: 'https://support.lucidlink.com/hc/en-us'}
+  - {name: Slack community, url: 'https://www.lucidlink.com/partners', note: 'listed as a plan entitlement on the pricing page'}
+  - {name: Email, url: 'mailto:support+ticket@lucidlink.com', note: 'the address the Service API reference gives for OAuth2 credential issuance'}
+  sso: >-
+    Since build 3.7.8584 (2026-08-08) LucidLink is the identity provider for its own Zendesk
+    support portal, so submitting a request signs the user in automatically.
+release_management:
+  changelog: changelog/lucidlink-changelog.yml
+  cadence: every 1-2 weeks, dated per build
+  latest_release: {version: 3.8.8694, date: '2026-08-25'}
+  beta_surfaces:
+  - {name: Python SDK, status: beta, since_version: '0.13.0'}
+  - {name: MCP Server, status: beta, since_version: '0.3.0'}
+  - {name: Collaborator Service Accounts, status: beta, note: 'API-only in this beta — no UI for creating or managing them (build 3.7.8584)'}
+  ga_surfaces:
+  - {name: LucidLink API, status: GA}
+  - {name: LucidLink Connect, status: GA}
+  - {name: 'Frame.io workflows', status: GA}

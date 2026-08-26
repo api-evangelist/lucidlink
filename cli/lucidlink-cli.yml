@@ -1,0 +1,103 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://support.lucidlink.com/hc/en-us/articles/31125468011789-Command-line-feature-functions
+  and the Command-line interface KB section
+  (https://support.lucidlink.com/hc/en-us/sections/31125475039117-Command-line-interface)
+name: lucid
+binary: lucid
+description: >-
+  `lucid` is LucidLink's first-party command-line client, shipped inside the desktop client
+  package for Windows, macOS and Linux. It is not a wrapper over the REST APIs — it drives
+  the local LucidLink daemon that mounts and streams the filespace, so its surface is
+  mount/cache/lock/snapshot rather than members and billing. It is also the only published
+  interface for several operations (cache tuning, prefetcher control, pinning, S3/Azure
+  rekey, metastore, fscheck).
+install:
+- method: bundled
+  detail: Installed with the LucidLink desktop client from https://www.lucidlink.com/download
+- method: command-line download
+  detail: LucidLink documents a headless/scripted client download for server installs
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125482780941-Command-line-download-LucidLink-client
+usage: 'lucid [general options] command [options]'
+global_options:
+- flag: --rest-endpoint
+  value: ip:port
+  description: Specify the REST service ip:port
+- flag: --id
+  value: id
+  description: Specify a daemon instance id (see `lucid list`)
+- flag: --instance
+  value: id
+  description: Alias for --id
+- flag: --name
+  value: fs
+  description: Specify a filespace name
+command_groups:
+- group: general
+  commands:
+  - {name: help, description: Display argument help information}
+  - {name: version, description: Display version information}
+  - {name: info, description: Display general information}
+  - {name: status, description: Display information about the currently linked filespace}
+  - {name: list, description: Lists the currently linked filespaces}
+  - {name: support, description: Collect and upload a Lucid diagnostic report}
+- group: daemon and lifecycle
+  commands:
+  - {name: daemon, description: Start the daemon/service in interactive mode}
+  - {name: exit, description: Call the daemon to exit}
+  - {name: update, description: Auto-updater control}
+- group: filespace link and mount
+  commands:
+  - {name: link, description: Link to a filespace (also how a snapshot is activated)}
+  - {name: unlink, description: Unlink from a linked filespace}
+  - {name: mount, description: Mount the filespace to the OS}
+  - {name: unmount, description: Unmount the filespace from the OS}
+  - {name: config, description: Set local or global scope filespace configurations}
+- group: performance and cache
+  commands:
+  - {name: cache, description: Display cache information and control the cache}
+  - {name: prefetcher, description: Display information and control the prefetcher}
+  - {name: pin, description: Pin/unpin a folder or file locally (keep or remove a local copy)}
+  - {name: compression, description: Display information and control protocol compression}
+  - {name: perf, description: Periodically output performance metrics}
+  - {name: latency, description: Frequency distribution or statistics of GET/PUT request latencies}
+  - {name: sync, description: Synchronize all data and metadata with the cloud}
+- group: integrity and data protection
+  commands:
+  - {name: fscheck, description: Run checks on the filesystem metadata}
+  - {name: metastore, description: Controls the behavior of the metastore}
+  - {name: snapshot, description: Snapshot management}
+  - {name: snapshot-schedule, description: Snapshot schedule management (requires administrative privileges)}
+  - {name: lock, description: Display file locking information}
+- group: credentials
+  commands:
+  - {name: rekey-s3, description: Rekey S3 credentials, docs: 'https://support.lucidlink.com/hc/en-us/articles/43317851707021-Rekey-S3-credentials'}
+  - {name: rekey-azure, description: Rekey Azure credentials}
+  - {name: rotate-credentials, description: 'Rotate the service-account key used by the desktop daemon without remounting the filespace. Added in build 3.7.8468 (2026-07-11); see `lucid help rotate-credentials`.'}
+- group: diagnostics and platform
+  commands:
+  - {name: log, description: 'Set or display logging verbosity (default: list all loggers)'}
+  - {name: log-config, description: Additional logging configuration}
+  - {name: shell-ext, description: Information about the Windows Explorer shell extension}
+command_count: 29
+key_flows:
+- flow: Link a filespace headlessly on a server
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125495032461-Link-to-filespace-from-the-command-line
+- flow: Link multiple filespaces on one client
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125497979789-Link-to-multiple-filespaces-from-the-command-line
+- flow: Link with a specific cache and metadata location
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125476127501-Link-Filespace-with-a-specific-cache-and-metadata-location
+- flow: Adjust local cache settings
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125513628557-Adjust-local-cache-settings-in-the-command-line-interface
+- flow: Change the data cache location
+  docs: https://support.lucidlink.com/hc/en-us/articles/32067786986381-Change-the-data-cache-location-from-the-CLI
+- flow: Change the filespace mount point
+  docs: https://support.lucidlink.com/hc/en-us/articles/31125475795981-Change-Filespace-mount-point
+- flow: Rotate the daemon's service-account key in place
+  command: lucid rotate-credentials
+notes: >-
+  The `--rest-endpoint ip:port` global option is worth flagging: the local daemon exposes
+  its own REST service, and the CLI is a client of it. That is a fourth HTTP surface,
+  entirely undocumented as an API, and it is the mechanism the Python SDK and the MCP server
+  ultimately reach the filespace through.

@@ -1,0 +1,255 @@
+generated: '2026-08-25'
+method: derived
+source: >-
+  mcp/lucidlink-mcp.yml (47 tools read from LucidLink's published lucidlink-mcp 0.3.0
+  wheel), openapi/lucidlink-service-api.json (Swagger 2.0, 14 operations), and the
+  documented self-hosted Management API surface at
+  https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
+description: >-
+  LucidLink's MCP surface and its REST surfaces are almost disjoint, and that is the
+  headline of this crosswalk rather than a gap in it. The MCP server is a DATA-PLANE tool
+  set — it drives the filespace itself (read, write, edit, lock, search, audit) through the
+  Python SDK and the LucidLink client daemon, not through any published HTTP API. The
+  public Service API (openapi/lucidlink-service-api.json) is a CONTROL-PLANE billing and
+  provisioning API. The overlap is a handful of filespace-lifecycle and workspace-admin
+  calls. Nothing here is mapped by guesswork: every `rest` value below is either a real
+  operationId from the saved Swagger document or a documented Management/Web-Service API
+  path, and confidence is set low wherever the binding is semantic rather than proven.
+surfaces:
+  openapi:
+    file: openapi/lucidlink-service-api.json
+    base: https://api.lucidlink.com/api/v1
+    operations: 14
+    gated: false
+    note: Specification is public; calling it needs OAuth2 client credentials issued on request.
+  management_api:
+    base: http://{api-container-host}:3003/api/v1
+    spec: not publicly fetchable — Swagger is generated and served by the customer's own container at /api/v1/docs
+    gated: true
+    note: Endpoint inventory below is taken from LucidLink's published KB reference, not from a spec file.
+  web_service_v2:
+    base: https://api.lucidlink.com/api/v2
+    spec: none published
+    gated: true
+    note: >-
+      Paths read from LucidLink's own lucidlink_mcp/web_service_client.py; probed
+      anonymously on 2026-08-25 and answered 401 {"message":"Missing token"}.
+  mcp:
+    transport: stdio (uvx lucidlink-mcp@latest)
+    url: null
+    gated: true
+    note: No hosted MCP endpoint; a live tools/list requires a service-account token.
+  graphql:
+    endpoint: null
+    note: Probed https://api.lucidlink.com/graphql — 404. No GraphQL surface.
+crosswalk:
+- tool: list_filespaces
+  category: discovery
+  rest:
+  - getFilespaces
+  binding: same-resource
+  confidence: medium
+  note: >-
+    Both list filespaces, but from different planes — getFilespaces is the billing-domain
+    filespace list on the public Service API, while list_filespaces enumerates what a
+    service account may link. Names and shapes differ.
+- tool: current_filespace
+  category: discovery
+  rest:
+  - getFilespace
+  binding: semantic
+  confidence: low
+  note: getFilespace retrieves a filespace by id; current_filespace reports client link state.
+- tool: filespace_stats
+  category: stats
+  rest:
+  - getFilespace
+  binding: semantic
+  confidence: low
+  note: >-
+    Overlaps only on usage-style fields. The Service API's FilespaceUsage/StorageStats
+    definitions are billing dimensions; filespace_stats walks the live filesystem.
+- tool: link_external_file
+  category: connect
+  rest: []
+  binding: none
+  confidence: high
+  note: LucidLink Connect. No public REST operation; SDK/MCP only.
+- tool: register_data_store
+  category: connect
+  rest: []
+  binding: none
+  confidence: high
+- tool: create_directory
+  category: filesystem
+  rest:
+  - 'POST /api/v1/filespaces/{filespaceId}/entries (Management API, self-hosted)'
+  binding: equivalent-different-api
+  confidence: medium
+  note: >-
+    The Directory Management API on the self-hosted container performs the same action over
+    HTTP. No operationId is available because that spec is not published.
+- tool: list_files
+  category: filesystem
+  rest:
+  - 'GET /api/v1/filespaces/{filespaceId}/entries/{entryId}/children (Management API, self-hosted)'
+  binding: equivalent-different-api
+  confidence: medium
+- tool: get_entry
+  category: filesystem
+  rest:
+  - 'GET /api/v1/filespaces/{filespaceId}/entries/{entryId} (Management API, self-hosted)'
+  - 'GET /api/v1/filespaces/{filespaceId}/entries/resolve (Management API, self-hosted)'
+  binding: equivalent-different-api
+  confidence: medium
+- tool: delete_path
+  category: filesystem
+  rest:
+  - 'DELETE /api/v1/filespaces/{filespaceId}/entries/{entryId} (Management API, self-hosted)'
+  binding: partial
+  confidence: medium
+  note: >-
+    The REST route deletes directories only and requires them to be empty; the MCP tool
+    deletes files and directories.
+- tool: whoami
+  category: identity
+  rest:
+  - 'GET /api/v2/service-accounts/me (Web Service API v2)'
+  binding: semantic
+  confidence: medium
+  note: whoami reports filesystem-level session identity; the admin sibling whoami_admin calls the v2 route directly.
+- tool: verify_token
+  category: identity
+  rest:
+  - 'GET /api/v2/service-accounts/me (Web Service API v2)'
+  binding: semantic
+  confidence: medium
+mcp_only:
+- tool: read_file
+  reason: Filespace data-plane read through the SDK/daemon. No HTTP API exposes file content.
+- tool: write_file
+  reason: Data-plane write. No published REST equivalent.
+- tool: write_at
+  reason: Byte-offset write; no REST equivalent.
+- tool: truncate_file
+  reason: No REST equivalent.
+- tool: move_path
+  reason: No REST equivalent.
+- tool: sync_filespace
+  reason: Client-daemon flush operation; not an HTTP concept.
+- tool: read_lines
+  reason: Line-range read implemented client-side over the streamed file.
+- tool: edit_lines
+  reason: Client-side line edit; no REST equivalent.
+- tool: append_file
+  reason: No REST equivalent.
+- tool: search_replace
+  reason: No REST equivalent.
+- tool: copy_file
+  reason: No REST equivalent.
+- tool: find_files
+  reason: Filespace walk executed locally; there is no server-side search endpoint.
+- tool: grep_files
+  reason: Content regex search executed locally over streamed bytes.
+- tool: tree
+  reason: Local directory walk.
+- tool: count_files
+  reason: Local directory walk.
+- tool: lock_byte_range
+  reason: POSIX advisory byte-range lock via the LucidLink client. No HTTP surface.
+- tool: unlock_byte_range
+  reason: See lock_byte_range.
+- tool: claim_file
+  reason: Whole-file advisory lock; no HTTP surface.
+- tool: release_file
+  reason: See claim_file.
+- tool: list_locks_held
+  reason: Process-local lock registry.
+- tool: read_audit_trail
+  reason: Reads NDJSON under .lucid_audit/ inside the filespace, not an API.
+- tool: subscribe_changes
+  reason: Cursor over audit events in the filespace; there is no webhook or event API.
+- tool: poll_changes
+  reason: See subscribe_changes.
+- tool: unsubscribe_changes
+  reason: See subscribe_changes.
+- tool: link_filespace
+  reason: Client-daemon link/mount operation.
+- tool: unlink_filespace
+  reason: Client-daemon unlink operation.
+- tool: list_accounts
+  reason: Local named-account registry in the MCP server's own config.
+- tool: use_account
+  reason: Local session state.
+- tool: register_account
+  reason: Local session state.
+- tool: unregister_account
+  reason: Local session state.
+- tool: list_data_stores
+  reason: LucidLink Connect; no public REST operation.
+- tool: link_external_url
+  reason: LucidLink Connect.
+- tool: update_external_url
+  reason: LucidLink Connect.
+- tool: list_external_files
+  reason: LucidLink Connect.
+- tool: unlink_external_file
+  reason: LucidLink Connect.
+- tool: unregister_data_store
+  reason: LucidLink Connect.
+rest_only:
+- operation: createFilespace
+  reason: Provisioning on the public Service API. No MCP tool creates a filespace.
+- operation: deleteFilespace
+  reason: Destructive provisioning operation deliberately absent from the agent tool set.
+- operation: createDomain
+  reason: Domain administration; no MCP tool.
+- operation: getDomains
+  reason: Domain administration; no MCP tool.
+- operation: getDomain
+  reason: Domain administration; no MCP tool.
+- operation: updateDomain
+  reason: Domain administration; no MCP tool.
+- operation: deleteDomain
+  reason: Domain administration; no MCP tool.
+- operation: getCurrentPeriod
+  reason: Billing. No agent tool touches billing.
+- operation: getInvoices
+  reason: Billing.
+- operation: getInvoiceBreakdownPerFilespace
+  reason: Billing.
+- operation: getPaymentDetails
+  reason: Billing.
+- operation: setPaymentDetails
+  reason: Billing; a write to payment instruments, correctly absent from the tool set.
+- operation: 'POST /api/v1/members (Management API)'
+  reason: Member provisioning. Present in the MCP admin toolset only when that toolset is enabled.
+- operation: 'POST /api/v1/groups (Management API)'
+  reason: Group provisioning; admin toolset only.
+- operation: 'POST /api/v1/filespaces/{filespaceId}/permissions (Management API)'
+  reason: Permission grant; admin toolset only.
+- operation: 'GET /api/v1/providers (Management API)'
+  reason: Storage-provider enumeration; no MCP tool.
+- operation: 'GET /api/v1/health (Management API)'
+  reason: Liveness probe; no MCP tool.
+- operation: 'GET /api/v1/filespaces/{filespaceId}/direct-links/{entryId} (Management API)'
+  reason: >-
+    Direct-link generation. The MCP admin toolset has generate_direct_link_admin, but it is
+    not part of the enumerated data-plane tool set.
+coverage:
+  mcp_tools_total: 47
+  mcp_tools_mapped: 11
+  mcp_only: 36
+  rest_operations_public: 14
+  rest_operations_mapped: 5
+  rest_only_public: 12
+  rest_only_documented_unspecified: 6
+  high_confidence_bindings: 2
+  medium_confidence_bindings: 7
+  low_confidence_bindings: 2
+notes: >-
+  Read this as evidence that LucidLink shipped an agent surface that is genuinely new work
+  rather than a wrapper: 36 of 47 tools have no REST analogue anywhere in the company's
+  published or documented HTTP APIs. The inverse is also true — every billing operation and
+  every destructive provisioning operation on the public Service API is deliberately absent
+  from the tool set.

@@ -1,0 +1,35 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  openapi/lucidlink-service-api.json securityDefinitions, plus a documentation search for a
+  scopes or permissions reference across support.lucidlink.com and www.lucidlink.com
+docs: null
+docs_note: >-
+  No scopes or permissions reference page exists. LucidLink's Help Center has no article on
+  API scopes, and the Service Accounts article states the opposite — that for the initial
+  release a service account "inherits the full permissions/scope of a workspace
+  administrator, granting access to all available API functionalities".
+schemes:
+- name: standard
+  api: LucidLink Service API v1
+  source: openapi/lucidlink-service-api.json
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://auth.lucidlink.com/oauth2/token
+scopes: []
+scope_count: 0
+finding: >-
+  LucidLink declares an OAuth2 client-credentials flow with an EMPTY scopes map and applies
+  it globally. There is no way for a client to request less than everything: one credential
+  reaches domain creation and deletion, filespace creation and deletion, and billing —
+  including PATCH /billing/payment, which overwrites the payment instrument on the account.
+  For an agent-mediated integration that is the sharpest edge on this API.
+partial_mitigation:
+  name: Collaborator Service Accounts (beta)
+  since: build 3.7.8584 (2026-08-08)
+  detail: >-
+    Scopes automation to specific folders and filespaces rather than to full admin. It
+    applies to the service-account bearer model on the Management API, not to the OAuth2
+    credentials on the public Service API, and it is API-only with no UI in beta.
+  docs: https://support.lucidlink.com/hc/en-us/articles/48014583746573-Collaborator-Service-Accounts-Beta

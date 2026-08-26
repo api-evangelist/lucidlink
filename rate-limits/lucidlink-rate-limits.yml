@@ -1,0 +1,56 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://support.lucidlink.com/hc/en-us/articles/40222376164365-Best-Practices-Operating-the-LucidLink-API-Container,
+  openapi/lucidlink-service-api.json, live header inspection of https://api.lucidlink.com
+  on 2026-08-25, and lucidlink_mcp/rate_limit.py + config.py from the published
+  lucidlink-mcp 0.3.0 wheel
+limit_count: 0
+summary: >-
+  LucidLink publishes no numeric rate limit for any of its APIs, and takes an explicit
+  documented position on why: the administrative API is self-hosted, so there is no
+  LucidLink-side gate in front of it. That is an unusual and honest answer rather than a
+  silent gap, and it is quoted verbatim below. The practical consequence for an integrator
+  is that there is no published budget to plan against and no runtime header to react to.
+documented_position:
+  quote: >-
+    "While there may not be hard external rate limits imposed by the self-hosted container,
+    remember that the API calls still interact with your LucidLink backend services. Avoid
+    aggressive polling or rapid, unnecessary requests that could create undue load on your
+    workspace management systems."
+  url: https://support.lucidlink.com/hc/en-us/articles/40222376164365-Best-Practices-Operating-the-LucidLink-API-Container
+  companion_guidance: >-
+    "Optimize Batch Operations: Where possible, structure your scripts to use batch
+    operations rather than issuing many sequential, individual requests."
+limits: []
+response_headers:
+  x_ratelimit: not observed
+  ratelimit_rfc9238: not observed
+  retry_after:
+    observed: false
+    note: >-
+      No Retry-After was returned on any anonymous response, but api.lucidlink.com does send
+      `access-control-expose-headers: Retry-After` on every response — so the header is
+      expected to appear on some (presumably throttled or authenticated) path and is
+      deliberately made visible to browser clients. Confirming it would require an
+      authenticated, load-generating probe, which this pass does not perform.
+  exhaustion_status: not published
+client_side_limiting:
+  surface: LucidLink MCP Server
+  mechanism: >-
+    lucidlink-mcp ships its own in-process rate limiter (lucidlink_mcp/rate_limit.py). Every
+    tool call rate-checks before executing, and the cap is set by the `rateLimit` config key
+    with a fixed, non-configurable window.
+  default_value: not published in the docs; read from the package's DEFAULT_RATE_LIMIT_CALLS constant
+  note: >-
+    This protects LucidLink's backend from an agent, not the agent from LucidLink. It is the
+    only rate-limiting mechanism found anywhere in the LucidLink developer surface.
+scaling_guidance:
+  url: https://support.lucidlink.com/hc/en-us/articles/43197827829901-Scaling-LucidLink-API-with-Docker-Compose-and-NGINX
+  note: >-
+    LucidLink publishes a Docker Compose + NGINX article for scaling the self-hosted API
+    container horizontally, which is the throughput lever it offers in place of a quota.
+gaps:
+- No numeric request-per-window limit is published for any LucidLink API.
+- No rate-limit response header is documented for any LucidLink API.
+- No 429 response is declared on any operation in the published Swagger document.

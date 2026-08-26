@@ -1,0 +1,768 @@
+generated: '2026-08-25'
+method: searched
+source: https://www.lucidlink.com/mcp-server and https://pypi.org/project/lucidlink-mcp/ (wheel lucidlink_mcp-0.3.0-py3-none-any.whl,
+  fetched 2026-08-25)
+name: LucidLink MCP Server
+status: beta
+version: 0.3.0
+vendor: LucidLink Corp.
+description: 'Official LucidLink MCP server (beta). Gives MCP-compatible agents a shared, persistent
+
+  LucidLink filespace they can read, write, search, lock and audit — the "shared data
+
+  layer for agentic AI" LucidLink markets at lucidlink.com/mcp-server. It is a local
+
+  stdio server: the MCP client launches it with uvx and no LucidLink-hosted MCP endpoint
+
+  exists. An optional --http streamable-HTTP transport binds loopback only and is the
+
+  operator''s own to expose (reverse proxy or the companion
+
+  lucidlink-mcp-cloudflared tunnel package); that is self-hosting, not a vendor-hosted
+
+  remote server.'
+deployment:
+  mode: local-stdio
+  install: uvx lucidlink-mcp@latest
+  package: https://pypi.org/project/lucidlink-mcp/
+  auth: api-key
+  verified: searched
+  auth_detail: LucidLink service-account token (documented prefix sa_live:), configured with `uvx --from
+    lucidlink-mcp lucidlink-mcp-setup`. Minted by a workspace admin; Business or Enterprise plan required.
+  client_registration:
+    claude_code: claude mcp add lucidlink -s user -- uvx lucidlink-mcp@latest
+    codex: codex mcp add lucidlink -- uvx lucidlink-mcp@latest
+    cursor: '{"mcpServers":{"lucidlink":{"command":"uvx","args":["lucidlink-mcp@latest"]}}}'
+  prerequisites:
+  - uv / uvx on PATH
+  - Python >= 3.10 (uv supplies it)
+  - Node.js 22+ on PATH — only for the admin toolset; file tools do not need it
+  remote_endpoint: null
+  remote_note: None published. `lucidlink-mcp --http` serves streamable HTTP but binds a loopback port
+    behind a generated secret path segment with DNS-rebinding protection, and its own module docstring
+    says "exposing it is the operator's pipe".
+safety_controls:
+- control: read-only mode
+  detail: LUCIDLINK_MCP_READ_ONLY env var or readOnly config key; HTTP mode defaults to read-only tools.
+- control: dangerous-action confirmation
+  detail: Destructive or dangerous operations are flagged for explicit client confirmation.
+- control: MCP tool annotations
+  detail: Every tool carries a read_only / additive / destructive / stateful annotation, recorded per
+    tool below.
+- control: client-side rate limiting
+  detail: rateLimit config key caps calls per fixed window inside the server process.
+- control: no desktop mount required
+  detail: Agents reach the filespace through the SDK, not a decrypted mounted drive.
+- control: audit trail
+  detail: read_audit_trail / subscribe_changes read NDJSON audit events under .lucid_audit/ when an admin
+    has enabled audit.
+- control: path canonicalization
+  detail: '@canonicalize_paths normalizes every path argument before the tool body runs.'
+toolsets:
+- filesystem
+- editing
+- discovery
+- search
+- locking
+- connect
+- audit
+- stats
+- identity
+- change-feed
+- admin
+tool_count: 47
+tool_extraction_note: 'A live tools/list could not be run anonymously: this server is stdio-only and refuses
+
+  to start without a service-account token, so there is no anonymous endpoint to POST
+
+  jsonrpc tools/list at. The tool list below was extracted statically from LucidLink''s
+
+  own published wheel (lucidlink_mcp/tools/*.py, @mcp.tool decorators) by AST parse —
+
+  names, titles, behaviour annotations, parameters, types and defaults are verbatim from
+
+  the provider''s shipped source. The `admin` toolset (whoami_admin, workspace_summary_admin
+
+  and the rest of lucidlink_mcp/tools/admin.py) registers through a dynamic wrapper rather
+
+  than a literal @mcp.tool decorator and is only enabled when the admin toolset is turned
+
+  on, so those tools are noted but not enumerated here.'
+tools:
+- name: read_audit_trail
+  title: Read Audit Trail
+  category: audit
+  behavior: read_only
+  summary: Query the linked filespace's audit trail (NDJSON under .lucid_audit/).
+  parameters:
+  - name: mode
+    type: str
+    default: '''search'''
+  - name: time_range
+    type: str | None
+    default: '''24h'''
+  - name: user
+    type: str | None
+    default: None
+  - name: action
+    type: str | None
+    default: None
+  - name: path_prefix
+    type: str | None
+    default: None
+  - name: limit
+    type: int
+    default: '50'
+  - name: group_by
+    type: str | None
+    default: None
+  returns: str
+- name: verify_token
+  title: Verify Token
+  category: identity
+  behavior: read_only
+  summary: Check whether the CURRENT account's LucidLink token is accepted.
+  parameters: []
+  returns: str
+- name: list_data_stores
+  title: List Data Stores
+  category: connect
+  behavior: read_only
+  summary: List data stores registered on the linked filespace.
+  parameters: []
+  returns: str
+- name: link_external_file
+  title: Link External File
+  category: connect
+  behavior: additive
+  summary: Link an S3 object as a read-only file in the linked filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: data_store_name
+    type: str
+    required: true
+  - name: object_id
+    type: str
+    required: true
+  - name: size
+    type: int | None
+    default: None
+  - name: checksum
+    type: str | None
+    default: None
+  returns: str
+- name: link_external_url
+  title: Link External URL
+  category: connect
+  behavior: additive
+  summary: Link a direct HTTP/HTTPS URL as a read-only file in the filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: url
+    type: str
+    required: true
+  - name: size
+    type: int | None
+    default: None
+  returns: str
+- name: update_external_url
+  title: Update External URL
+  category: connect
+  behavior: additive
+  summary: Repoint an existing HTTP/HTTPS external-file link to a new URL.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: new_url
+    type: str
+    required: true
+  - name: size
+    type: int | None
+    default: None
+  returns: str
+- name: list_external_files
+  title: List External Files
+  category: connect
+  behavior: read_only
+  summary: Paginated listing of files linked from a data store.
+  parameters:
+  - name: data_store_name
+    type: str
+    required: true
+  - name: limit
+    type: int
+    default: '100'
+  - name: cursor
+    type: str | None
+    default: None
+  returns: str
+- name: unlink_external_file
+  title: Unlink External File
+  category: connect
+  behavior: destructive
+  summary: Remove an external-file link from the filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  returns: str
+- name: register_data_store
+  title: Register Data Store
+  category: connect
+  behavior: additive
+  summary: Register an S3 data store from operator-provided credentials.
+  parameters:
+  - name: name
+    type: str
+    required: true
+  returns: str
+- name: unregister_data_store
+  title: Unregister Data Store
+  category: connect
+  behavior: destructive
+  summary: Remove (unregister) an S3 data store from the linked filespace.
+  parameters:
+  - name: name
+    type: str
+    required: true
+  returns: str
+- name: list_filespaces
+  title: List Filespaces
+  category: discovery
+  behavior: read_only
+  summary: List filespaces visible to a service account.
+  parameters:
+  - name: account
+    type: str | None
+    default: None
+  returns: str
+- name: link_filespace
+  title: Link Filespace
+  category: discovery
+  behavior: stateful
+  summary: Make a filespace the current one for filesystem / locking / audit
+  parameters:
+  - name: name
+    type: str
+    required: true
+  - name: account
+    type: str | None
+    default: None
+  returns: str
+- name: current_filespace
+  title: Current Filespace
+  category: discovery
+  behavior: read_only
+  summary: Return the current account's linked filespaces (current one first),
+  parameters: []
+  returns: str
+- name: unlink_filespace
+  title: Unlink Filespace
+  category: discovery
+  behavior: stateful
+  summary: Detach ONE linked filespace (the current one when ``name`` is
+  parameters:
+  - name: name
+    type: str | None
+    default: None
+  - name: account
+    type: str | None
+    default: None
+  returns: str
+- name: list_accounts
+  title: List Accounts
+  category: discovery
+  behavior: read_only
+  summary: List the configured named accounts (service-account identities).
+  parameters: []
+  returns: str
+- name: use_account
+  title: Use Account
+  category: discovery
+  behavior: stateful
+  summary: Switch the current account for subsequent tool calls.
+  parameters:
+  - name: name
+    type: str
+    required: true
+  returns: str
+- name: register_account
+  title: Register Account
+  category: discovery
+  behavior: stateful
+  summary: Register a minted credential as a named account for THIS session.
+  parameters:
+  - name: name
+    type: str
+    required: true
+  - name: token_path
+    type: str
+    required: true
+  returns: str
+- name: unregister_account
+  title: Unregister Account
+  category: discovery
+  behavior: stateful
+  summary: Drop a session-registered account (the inverse of ``register_account``).
+  parameters:
+  - name: name
+    type: str
+    required: true
+  returns: str
+- name: find_files
+  title: Find Files
+  category: search
+  behavior: read_only
+  summary: Find files / directories by name (fnmatch glob).
+  parameters:
+  - name: name_pattern
+    type: str
+    required: true
+  - name: path_prefix
+    type: str
+    default: '''/'''
+  - name: type_filter
+    type: str | None
+    default: None
+  - name: limit
+    type: int
+    default: '200'
+  returns: str
+- name: grep_files
+  title: Grep Files
+  category: search
+  behavior: read_only
+  summary: Search file CONTENTS via Python regex (re.search).
+  parameters:
+  - name: pattern
+    type: str
+    required: true
+  - name: path_prefix
+    type: str
+    default: '''/'''
+  - name: include_pattern
+    type: str | None
+    default: None
+  - name: exclude_pattern
+    type: str | None
+    default: None
+  - name: case_sensitive
+    type: bool
+    default: 'True'
+  - name: limit
+    type: int
+    default: '100'
+  - name: max_file_size_bytes
+    type: int
+    default: 5 * 1024 * 1024
+  returns: str
+- name: tree
+  title: Tree
+  category: search
+  behavior: read_only
+  summary: Map the directory hierarchy, grouped under full directory paths.
+  parameters:
+  - name: path
+    type: str
+    default: '''/'''
+  - name: max_depth
+    type: int
+    default: '3'
+  - name: max_entries_per_dir
+    type: int
+    default: '20'
+  - name: exclude_pattern
+    type: str | None
+    default: '''.lucid_audit'''
+  returns: str
+- name: read_lines
+  title: Read Lines
+  category: editing
+  behavior: read_only
+  summary: Read a line-range from a text file.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: start_line
+    type: int
+    default: '1'
+  - name: end_line
+    type: int | None
+    default: None
+  returns: str
+- name: edit_lines
+  title: Edit Lines
+  category: editing
+  behavior: destructive
+  summary: Replace lines [start_line, end_line] (inclusive, 1-indexed) with ``new_content``.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: start_line
+    type: int
+    required: true
+  - name: end_line
+    type: int
+    required: true
+  - name: new_content
+    type: str
+    required: true
+  - name: dry_run
+    type: bool
+    default: 'False'
+  - name: expected_content
+    type: str | None
+    default: None
+  returns: str
+- name: append_file
+  title: Append to File
+  category: editing
+  behavior: additive
+  summary: Append to a file (creates if missing).
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: content_base64
+    type: str | None
+    default: None
+  - name: content
+    type: str | None
+    default: None
+  returns: str
+- name: search_replace
+  title: Search & Replace
+  category: editing
+  behavior: destructive
+  summary: sed-style find-and-replace within a single text file.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: find
+    type: str
+    required: true
+  - name: replace
+    type: str
+    required: true
+  - name: regex
+    type: bool
+    default: 'False'
+  - name: case_sensitive
+    type: bool
+    default: 'True'
+  - name: max_replacements
+    type: int | None
+    default: None
+  - name: dry_run
+    type: bool
+    default: 'False'
+  returns: str
+- name: copy_file
+  title: Copy File
+  category: editing
+  behavior: destructive
+  summary: Copy/duplicate/back up a file within the filespace.
+  parameters:
+  - name: src
+    type: str
+    required: true
+  - name: dst
+    type: str
+    required: true
+  - name: overwrite
+    type: bool
+    default: 'False'
+  returns: str
+- name: read_file
+  title: Read File
+  category: filesystem
+  behavior: read_only
+  summary: Read file content from the linked filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: offset
+    type: int
+    default: '0'
+  - name: length
+    type: int | None
+    default: None
+  - name: encoding
+    type: str
+    default: '''auto'''
+  returns: str
+- name: write_file
+  title: Write File
+  category: filesystem
+  behavior: destructive
+  summary: Write file content to the linked filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: content_base64
+    type: str | None
+    default: None
+  - name: create_parents
+    type: bool
+    default: 'True'
+  - name: exclusive
+    type: bool
+    default: 'False'
+  - name: sync
+    type: bool
+    default: 'True'
+  - name: content
+    type: str | None
+    default: None
+  returns: str
+- name: write_at
+  title: Write At
+  category: filesystem
+  behavior: destructive
+  summary: Overwrite bytes at a byte ``offset`` in an existing file, preserving
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: offset
+    type: int
+    required: true
+  - name: content_base64
+    type: str | None
+    default: None
+  - name: exclusive
+    type: bool
+    default: 'False'
+  - name: sync
+    type: bool
+    default: 'True'
+  - name: content
+    type: str | None
+    default: None
+  returns: str
+- name: sync_filespace
+  title: Sync Filespace
+  category: filesystem
+  behavior: additive
+  summary: Flush all pending writes to the hub, making them durable and visible
+  parameters: []
+  returns: str
+- name: list_files
+  title: List Files
+  category: filesystem
+  behavior: read_only
+  summary: List entries in a directory of the linked filespace.
+  parameters:
+  - name: path
+    type: str
+    default: '''/'''
+  - name: pattern
+    type: str | None
+    default: None
+  returns: str
+- name: get_entry
+  title: Get Entry
+  category: filesystem
+  behavior: read_only
+  summary: Return metadata for a single file or directory.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  returns: str
+- name: create_directory
+  title: Create Directory
+  category: filesystem
+  behavior: additive
+  summary: Create a directory, including any missing parent directories
+  parameters:
+  - name: path
+    type: str
+    required: true
+  returns: str
+- name: delete_path
+  title: Delete Path
+  category: filesystem
+  behavior: destructive
+  summary: Delete a file or directory.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: recursive
+    type: bool
+    default: 'False'
+  returns: str
+- name: truncate_file
+  title: Truncate File
+  category: filesystem
+  behavior: destructive
+  summary: Truncate or extend an existing file to exactly ``size`` bytes.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: size
+    type: int
+    required: true
+  returns: str
+- name: move_path
+  title: Move Path
+  category: filesystem
+  behavior: destructive
+  summary: Move/rename within the same filespace (atomic where possible).
+  parameters:
+  - name: src
+    type: str
+    required: true
+  - name: dst
+    type: str
+    required: true
+  returns: str
+- name: whoami
+  title: Whoami
+  category: identity
+  behavior: read_only
+  summary: Return the current agent's identity and session state.
+  parameters: []
+  returns: str
+- name: lock_byte_range
+  title: Lock Byte Range
+  category: locking
+  behavior: additive
+  summary: Acquire a byte-range lock on a file in the current filespace.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: offset
+    type: int
+    required: true
+  - name: length
+    type: int
+    required: true
+  - name: mode
+    type: str
+    default: '''exclusive'''
+  - name: blocking
+    type: bool
+    default: 'True'
+  returns: str
+- name: unlock_byte_range
+  title: Unlock Byte Range
+  category: locking
+  behavior: destructive
+  summary: Release a byte-range lock and close the underlying handle.
+  parameters:
+  - name: handle_id
+    type: int
+    required: true
+  - name: offset
+    type: int | None
+    default: None
+  - name: length
+    type: int | None
+    default: None
+  returns: str
+- name: claim_file
+  title: Claim File
+  category: locking
+  behavior: additive
+  summary: Acquire an exclusive (or shared) lock over an ENTIRE file.
+  parameters:
+  - name: path
+    type: str
+    required: true
+  - name: mode
+    type: str
+    default: '''exclusive'''
+  - name: blocking
+    type: bool
+    default: 'True'
+  returns: str
+- name: release_file
+  title: Release File
+  category: locking
+  behavior: destructive
+  summary: Release a previously claimed file (companion to ``claim_file``).
+  parameters:
+  - name: handle_id
+    type: int
+    required: true
+  returns: str
+- name: list_locks_held
+  title: List Locks Held
+  category: locking
+  behavior: read_only
+  summary: List byte-range locks currently held by THIS MCP process.
+  parameters: []
+  returns: str
+- name: filespace_stats
+  title: Filespace Stats
+  category: stats
+  behavior: read_only
+  summary: 'Summarize the linked filespace: entry count, logical and stored'
+  parameters: []
+  returns: str
+- name: count_files
+  title: Count Files
+  category: stats
+  behavior: read_only
+  summary: Count files and directories under a path, optionally filtered by name pattern.
+  parameters:
+  - name: path_prefix
+    type: str
+    default: '''/'''
+  - name: include_pattern
+    type: str | None
+    default: None
+  - name: exclude_pattern
+    type: str | None
+    default: None
+  returns: str
+- name: subscribe_changes
+  title: Subscribe to Changes
+  category: change-feed
+  behavior: stateful
+  summary: Open a cursor on audit events under a path prefix of the CURRENT filespace.
+  parameters:
+  - name: path_prefix
+    type: str
+    default: '''/'''
+  - name: poll_interval
+    type: int | None
+    default: None
+  returns: str
+- name: poll_changes
+  title: Poll Changes
+  category: change-feed
+  behavior: read_only
+  summary: Return audit events newer than the last poll, oldest-first.
+  parameters:
+  - name: subscription_id
+    type: str
+    required: true
+  - name: limit
+    type: int
+    default: '20'
+  returns: str
+- name: unsubscribe_changes
+  title: Unsubscribe from Changes
+  category: change-feed
+  behavior: stateful
+  summary: Close a subscription's cursor (on whichever filespace it lives).
+  parameters:
+  - name: subscription_id
+    type: str
+    required: true
+  returns: str

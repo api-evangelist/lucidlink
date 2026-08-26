@@ -1,0 +1,964 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "LucidLink Service API Reference",
+    "description": "The LucidLink API is organized around REST. \nThe API has predictable resource-oriented URLs, works with JSON-encoded request and response bodies and uses standard-based verbs (HTTP), responses and authentication. \nThe authentication uses OAuth2 Client Credentials Grant Type. The credentials are provided upon request sent to support+ticket@lucidlink.com or by visiting https://support.lucidlink.com/hc/en-us.\n\nHere is an example bash script to retrieve an access token and send an API request.\n```sh\n  #!/bin/bash\n  CLIENT_ID=...\n  CLIENT_SECRET=...\n  TOKEN_ENDPOINT=https://auth.lucidlink.com/oauth2/token\n  API_ENDPOINT=https://api.lucidlink.com/v1\n\n  # Encode client credentials in base64 before exchanging them for a token.\n  CLIENT_CREDENTIALS=$(echo -n $CLIENT_ID:$CLIENT_SECRET | base64 -w 0)\n\n  # Retrieve your access token.\n  ACCESS_TOKEN=$(curl $TOKEN_ENDPOINT \\\n      --http1.0 \\\n      -X POST \\\n      -H 'Content-Type: application/x-www-form-urlencoded' \\\n      -H \"Authorization: Basic $CLIENT_CREDENTIALS\" \\\n      -d 'grant_type=client_credentials' -s | jq -r '.access_token')\n\n  # Use the token to interact with the API\n  sendApiRequest()\n  {\n      echo $(curl $API_ENDPOINT/$1 \\\n          -X GET \\\n          -H \"Authorization: $ACCESS_TOKEN\" \\\n          -H \"Content-Type: application/json\" -s)\n  }\n  sendApiRequest \"domains\"\n```\n"
+  },
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "domain",
+      "description": "Domain operations."
+    },
+    {
+      "name": "filespace",
+      "description": "Filespace operations."
+    },
+    {
+      "name": "billing",
+      "description": "Billing operations."
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "security": [
+    {
+      "standard": []
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/domains": {
+      "x-swagger-router-controller": "Domain",
+      "post": {
+        "tags": [
+          "domain"
+        ],
+        "summary": "Create a domain.",
+        "operationId": "createDomain",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Domain object to be created. Domains are globally unique across all LucidLink accounts.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The domain object that has been created.",
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            }
+          },
+          "400": {
+            "description": "Invalid domain name.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "409": {
+            "description": "Domain name already taken or account has an existing domain.",
+            "schema": {
+              "$ref": "#/definitions/Conflict"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "domain"
+        ],
+        "summary": "Get a list of domains.",
+        "operationId": "getDomains",
+        "responses": {
+          "200": {
+            "description": "A list of domains.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Domain"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/domains/{id}": {
+      "x-swagger-router-controller": "Domain",
+      "get": {
+        "tags": [
+          "domain"
+        ],
+        "summary": "Retrieve a domain.",
+        "operationId": "getDomain",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the domain to be retrieved.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The domain object.",
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            }
+          },
+          "400": {
+            "description": "Invalid domain ID.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "404": {
+            "description": "Domain not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "domain"
+        ],
+        "summary": "Delete a domain.",
+        "operationId": "deleteDomain",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the domain to be deleted.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success."
+          },
+          "400": {
+            "description": "Invalid domain ID.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "404": {
+            "description": "Domain not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "409": {
+            "description": "Domain has filespaces.",
+            "schema": {
+              "$ref": "#/definitions/Conflict"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "domain"
+        ],
+        "summary": "Update a domain.",
+        "operationId": "updateDomain",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the domain to be updated.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Domain object to update with.",
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The domain object that has been updated.",
+            "schema": {
+              "$ref": "#/definitions/Domain"
+            }
+          },
+          "400": {
+            "description": "Invalid domain name.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "404": {
+            "description": "Domain not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "409": {
+            "description": "Domain has filespaces.",
+            "schema": {
+              "$ref": "#/definitions/Conflict"
+            }
+          }
+        }
+      }
+    },
+    "/filespaces": {
+      "x-swagger-router-controller": "Filespace",
+      "post": {
+        "tags": [
+          "filespace"
+        ],
+        "summary": "Create a filespace.",
+        "operationId": "createFilespace",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Filespace object to be created",
+            "schema": {
+              "$ref": "#/definitions/Filespace"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The filespace object that has been created",
+            "schema": {
+              "$ref": "#/definitions/Filespace"
+            }
+          },
+          "400": {
+            "description": "Invalid request. Check filespace model definition.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "409": {
+            "description": "Filespace name already exists.",
+            "schema": {
+              "$ref": "#/definitions/Conflict"
+            }
+          },
+          "422": {
+            "description": "Filespace creation is currently disabled in the selected region.",
+            "schema": {
+              "$ref": "#/definitions/UnprocessableEntity"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "filespace"
+        ],
+        "summary": "Get a list of filespaces.",
+        "operationId": "getFilespaces",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "qualifiedName",
+            "description": "Fully-qualified name of a filespace to search for.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of filespaces.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Filespace"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/filespaces/{id}": {
+      "x-swagger-router-controller": "Filespace",
+      "get": {
+        "tags": [
+          "filespace"
+        ],
+        "summary": "Retrieve a filespace.",
+        "operationId": "getFilespace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the filespace to be retrieved.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The filespace object.",
+            "schema": {
+              "$ref": "#/definitions/Filespace"
+            }
+          },
+          "400": {
+            "description": "Invalid filespace ID.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "404": {
+            "description": "Filespace not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "filespace"
+        ],
+        "summary": "Delete a filespace.",
+        "operationId": "deleteFilespace",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of the filespace to be deleted.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success."
+          },
+          "400": {
+            "description": "Invalid filespace ID.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          },
+          "404": {
+            "description": "Filespace not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          },
+          "409": {
+            "description": "Cannot delete filespace while in status `provisioning`.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+      }
+    },
+    "/billing/payment": {
+      "x-swagger-router-controller": "Billing",
+      "patch": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Set payment details.",
+        "operationId": "setPaymentDetails",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Payment details to set for the account.",
+            "schema": {
+              "$ref": "#/definitions/PaymentDetails"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success."
+          },
+          "400": {
+            "description": "Invalid request. Check billing model definition.",
+            "schema": {
+              "$ref": "#/definitions/BadRequest"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Get payment details.",
+        "operationId": "getPaymentDetails",
+        "responses": {
+          "200": {
+            "description": "Payment details for the account.",
+            "schema": {
+              "$ref": "#/definitions/PaymentDetails"
+            }
+          }
+        }
+      }
+    },
+    "/billing/current-period": {
+      "x-swagger-router-controller": "Billing",
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Get details about current billing period.",
+        "operationId": "getCurrentPeriod",
+        "responses": {
+          "200": {
+            "description": "Details about current billing period.",
+            "schema": {
+              "$ref": "#/definitions/BillingPeriod"
+            }
+          }
+        }
+      }
+    },
+    "/billing/invoices": {
+      "x-swagger-router-controller": "Billing",
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Get a list of issued invoices.",
+        "operationId": "getInvoices",
+        "responses": {
+          "200": {
+            "description": "A list of issued invoices.",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Invoice"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/billing/invoices/{id}/breakdown/csv": {
+      "x-swagger-router-controller": "Billing",
+      "get": {
+        "tags": [
+          "billing"
+        ],
+        "summary": "Retrieve an invoice amount due breakdown by filespace.",
+        "operationId": "getInvoiceBreakdownPerFilespace",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the invoice.",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "produces": [
+          "text/csv"
+        ],
+        "responses": {
+          "200": {
+            "description": "The invoice breakdown per filespace in CSV format."
+          },
+          "404": {
+            "description": "Invoice not found.",
+            "schema": {
+              "$ref": "#/definitions/NotFound"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "standard": {
+      "type": "oauth2",
+      "flow": "application",
+      "tokenUrl": "https://auth.lucidlink.com/oauth2/token"
+    }
+  },
+  "definitions": {
+    "Domain": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "description": "Lowercase letters, numbers or hyphens. 3-60 chars.",
+          "type": "string"
+        }
+      }
+    },
+    "Filespace": {
+      "required": [
+        "domain",
+        "name",
+        "storage"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "domain": {
+          "description": "Domain ID.",
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Unique within a domain. Lowercase letters, numbers or hyphens. Minimum 2 chars."
+        },
+        "version": {
+          "type": "number",
+          "description": "Optional filespace version. Possible values are:\n- 3 - without metadata streaming support.\n- 4 - metadata streaming support.\nDefault value is 3\n"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "provisioning",
+            "provisioned",
+            "initialized",
+            "error"
+          ],
+          "readOnly": true
+        },
+        "subscriptionType": {
+          "type": "string",
+          "description": "Optional filespace subscription type. Possible values per storage providers are:\n- 'basic' - Wasabi storage provider and lucidlink storage owner.\n- 'teams' or 'enterprise' - IBM storage provider and lucidlink storage owner. Defaults to 'teams'.\n- 'custom' - custom storage provider and customer storage owner.\n- 'none' - used to flag filespaces created prior to Feb 2021.\n",
+          "enum": [
+            "custom",
+            "basic",
+            "teams",
+            "enterprise",
+            "none"
+          ]
+        },
+        "usersCount": {
+          "type": "number",
+          "description": "Number of provisioned users for this Filespace."
+        },
+        "storage": {
+          "$ref": "#/definitions/FilespaceStorage"
+        },
+        "stats": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/FilespaceStats"
+            }
+          ],
+          "readOnly": true
+        }
+      }
+    },
+    "FilespaceStorage": {
+      "required": [
+        "provider"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "enum": [
+            "customer",
+            "lucidlink"
+          ]
+        },
+        "provider": {
+          "type": "string",
+          "enum": [
+            "Azure",
+            "AWS",
+            "AWSGovCloud",
+            "Alibaba",
+            "GCP",
+            "Zadara",
+            "Cloudian",
+            "DigitalOcean",
+            "Wasabi",
+            "Scality",
+            "Telefonica",
+            "Exoscale",
+            "Nutanix",
+            "Pure",
+            "Dell",
+            "IBM",
+            "Other"
+          ]
+        },
+        "region": {
+          "description": "Region is dependent on `provider`",
+          "type": "string"
+        },
+        "endpoint": {
+          "description": "Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.",
+          "type": "string"
+        },
+        "bucket": {
+          "type": "string",
+          "description": "Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars."
+        }
+      }
+    },
+    "FilespaceStats": {
+      "required": [
+        "filespaceSize"
+      ],
+      "properties": {
+        "usedStorage": {
+          "type": "number",
+          "description": "[bytes] Object storage bucket size. Includes snapshots data. Storage is billed based on this metric."
+        },
+        "filespaceSize": {
+          "type": "number",
+          "description": "[bytes] Filespace size as seen by the operating system."
+        },
+        "getRequestCount": {
+          "type": "number",
+          "description": "Number of object storage GET requests since Filespace creation."
+        },
+        "getDataSize": {
+          "type": "number",
+          "description": "[bytes] Data read from the object storage since Filespace creation."
+        },
+        "putRequestCount": {
+          "type": "number",
+          "description": "Number of object storage PUT requests since Filespace creation."
+        },
+        "listRequestCount": {
+          "type": "number",
+          "description": "Number of object storage LIST requests since Filespace creation."
+        },
+        "deleteRequestCount": {
+          "type": "number",
+          "description": "Number of object storage DELETE requests since Filespace creation."
+        },
+        "putDataSize": {
+          "type": "number",
+          "description": "[bytes] Data written to the object storage since Filespace creation."
+        }
+      }
+    },
+    "PaymentDetails": {
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "paymentSourceToken": {
+          "type": "string"
+        },
+        "card": {
+          "$ref": "#/definitions/Card"
+        }
+      }
+    },
+    "BillingPeriod": {
+      "required": [
+        "start",
+        "end",
+        "subscriptionStatus",
+        "amountDue",
+        "amountDueForecast",
+        "currency"
+      ],
+      "properties": {
+        "start": {
+          "type": "number"
+        },
+        "end": {
+          "type": "number"
+        },
+        "subscriptionStatus": {
+          "type": "string"
+        },
+        "amountDue": {
+          "type": "number",
+          "description": "Amount due to date within the current period in cents."
+        },
+        "amountDueForecast": {
+          "type": "number",
+          "description": "Forecast amount due to end of period in cents."
+        },
+        "currency": {
+          "type": "string"
+        },
+        "trialDays": {
+          "type": "number"
+        },
+        "filespaceBreakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/FilespaceLineItemWithForecast"
+          }
+        }
+      }
+    },
+    "Invoice": {
+      "required": [
+        "id",
+        "date",
+        "lineDescriptions",
+        "amountDue",
+        "currency",
+        "paymentStatus",
+        "pdfUrl",
+        "periodStart",
+        "periodEnd"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "date": {
+          "type": "number",
+          "example": 1549886746000
+        },
+        "lineDescriptions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "amountDue": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "periodStart": {
+          "type": "number"
+        },
+        "periodEnd": {
+          "type": "number"
+        },
+        "paymentStatus": {
+          "type": "string",
+          "enum": [
+            "not_paid",
+            "past_due",
+            "paid",
+            "voided"
+          ]
+        },
+        "pdfUrl": {
+          "type": "string"
+        },
+        "filespaceBreakdown": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/FilespaceLineItem"
+          }
+        }
+      }
+    },
+    "Card": {
+      "required": [
+        "numberLast4",
+        "expiryMonth",
+        "expiryYear"
+      ],
+      "properties": {
+        "numberLast4": {
+          "type": "string"
+        },
+        "expiryMonth": {
+          "type": "number"
+        },
+        "expiryYear": {
+          "type": "number"
+        }
+      }
+    },
+    "BadRequest": {
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 400
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "NotFound": {
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 404
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "Conflict": {
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 409
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "UnprocessableEntity": {
+      "required": [
+        "status",
+        "message"
+      ],
+      "properties": {
+        "status": {
+          "type": "number",
+          "example": 422
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "FilespaceLineItem": {
+      "required": [
+        "filespace",
+        "amountDue",
+        "usageByDimension",
+        "isDeleted",
+        "name",
+        "storageOwner"
+      ],
+      "properties": {
+        "filespace": {
+          "type": "string",
+          "description": "Filespace ID"
+        },
+        "amountDue": {
+          "type": "number",
+          "description": "Filespace amount due(fraction of the invoice amount due)."
+        },
+        "isDeleted": {
+          "type": "boolean",
+          "description": "Whether the filespace was deleted during the period or not."
+        },
+        "name": {
+          "type": "string",
+          "description": "Filespace name."
+        },
+        "storageProvider": {
+          "type": "string"
+        },
+        "storageOwner": {
+          "type": "string",
+          "enum": [
+            "lucidlink",
+            "customer"
+          ]
+        },
+        "subscriptionType": {
+          "type": "string",
+          "enum": [
+            "basic",
+            "teams",
+            "advanced",
+            "custom",
+            "none"
+          ]
+        },
+        "usageByDimension": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/FilespaceUsage"
+          },
+          "example": [
+            {
+              "dimension": "ManagedCapacity",
+              "usage": 2048
+            },
+            {
+              "dimension": "FilespaceUsers",
+              "usage": 10
+            }
+          ]
+        }
+      }
+    },
+    "FilespaceLineItemWithForecast": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/FilespaceLineItem"
+        },
+        {
+          "properties": {
+            "amountDueForecast": {
+              "description": "Filespace amount due forecast",
+              "type": "number"
+            }
+          },
+          "required": [
+            "amountDueForecast"
+          ]
+        }
+      ]
+    },
+    "FilespaceUsage": {
+      "required": [
+        "usage",
+        "dimension"
+      ],
+      "properties": {
+        "usage": {
+          "type": "number",
+          "description": "Usage amount."
+        },
+        "dimension": {
+          "type": "string",
+          "description": "Usage dimension. Based on the billing plan package.",
+          "enum": [
+            "ManagedCapacity",
+            "FilespaceUsers"
+          ]
+        }
+      }
+    }
+  }
+}

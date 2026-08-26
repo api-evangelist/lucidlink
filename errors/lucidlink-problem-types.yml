@@ -1,0 +1,91 @@
+generated: '2026-08-25'
+method: derived
+source: openapi/lucidlink-service-api.json (Swagger 2.0 published at https://api.lucidlink.com/docs/api/v1/)
+  plus the live 401/404 bodies observed on api.lucidlink.com 2026-08-25
+format: vendor-json
+rfc9457: false
+rfc9457_note: LucidLink does not use application/problem+json. Errors are a plain JSON object; the shape
+  differs between the three APIs, which is the finding.
+envelopes:
+- api: LucidLink Service API v1
+  media_type: application/json
+  shape: '{"status": <int>, "message": <string>}'
+  observed: GET https://api.lucidlink.com/api/v1/filespaces (unauthenticated) -> 401 {"status":401,"message":"Illegal
+    request"}
+  declared_in: openapi/lucidlink-service-api.json definitions BadRequest / NotFound / Conflict / UnprocessableEntity
+- api: LucidLink Web Service API v2
+  media_type: application/json
+  shape: '{"message": <string>, "error": <string>, "statusCode": <int>}'
+  observed: GET https://api.lucidlink.com/api/v2/workspaces (unauthenticated) -> 401 {"message":"Missing
+    token","error":"Unauthorized","statusCode":401}
+  declared_in: no published specification
+- api: api.lucidlink.com edge (unrouted paths)
+  media_type: application/json
+  shape: '{"success": false, "statusCode": <int>}'
+  observed: GET https://api.lucidlink.com/ -> 404 {"success":false,"statusCode":404}
+  declared_in: no published specification
+problem_types:
+- status: 400
+  schema: BadRequest
+  title: Invalid domain name.
+  envelope_fields:
+  - message
+  - status
+  operations:
+  - createDomain
+  - createFilespace
+  - deleteDomain
+  - deleteFilespace
+  - getDomain
+  - getFilespace
+  - setPaymentDetails
+  - updateDomain
+- status: 404
+  schema: NotFound
+  title: Domain not found.
+  envelope_fields:
+  - message
+  - status
+  operations:
+  - deleteDomain
+  - deleteFilespace
+  - getDomain
+  - getFilespace
+  - getInvoiceBreakdownPerFilespace
+  - updateDomain
+- status: 409
+  schema: Conflict
+  title: Domain name already taken or account has an existing domain.
+  envelope_fields:
+  - message
+  - status
+  operations:
+  - createDomain
+  - createFilespace
+  - deleteDomain
+  - updateDomain
+- status: 409
+  schema: NotFound
+  title: Cannot delete filespace while in status `provisioning`.
+  envelope_fields:
+  - message
+  - status
+  operations:
+  - deleteFilespace
+- status: 422
+  schema: UnprocessableEntity
+  title: Filespace creation is currently disabled in the selected region.
+  envelope_fields:
+  - message
+  - status
+  operations:
+  - createFilespace
+gaps:
+- No 5xx response is declared anywhere in the published Swagger document — 14 of 14 operations document
+  only 2xx and 4xx.
+- No 401 or 403 response is declared on any operation, although every operation is secured by OAuth2 and
+  the live API returns 401.
+- No machine-readable error CODE is defined; the only discriminator is the HTTP status plus a free-text
+  message.
+- The three APIs use three different error envelopes, so a client cannot parse errors uniformly across
+  LucidLink surfaces.

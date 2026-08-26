@@ -1,0 +1,109 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  openapi/lucidlink-service-api.json (securityDefinitions + info.description worked example),
+  https://support.lucidlink.com/hc/en-us/articles/40222074543757-Getting-Started-with-Service-Accounts-API-Authentication,
+  https://support.lucidlink.com/hc/en-us/articles/48014583746573-Collaborator-Service-Accounts-Beta,
+  and the published lucidlink-mcp 0.3.0 README
+docs: https://support.lucidlink.com/hc/en-us/articles/40222074543757-Getting-Started-with-Service-Accounts-API-Authentication
+summary:
+  types: [oauth2, http-bearer]
+  oauth2_flows: [clientCredentials]
+  api_keys: false
+  mtls: false
+  openid_connect: false
+  note: >-
+    Two distinct models across three APIs. The public Service API uses an OAuth2
+    client-credentials grant; the self-hosted Management API and the v2 web service use a
+    service-account secret key as a bearer token. There is no user-delegated OAuth flow and
+    no OIDC anywhere.
+schemes:
+- name: standard
+  api: LucidLink Service API v1
+  type: oauth2
+  declared_in: openapi/lucidlink-service-api.json
+  flows:
+  - flow: clientCredentials
+    tokenUrl: https://auth.lucidlink.com/oauth2/token
+    scopes: 0
+  applied: >-
+    globally — the document carries a top-level `security` block of
+    `[{standard: []}]`
+  token_request: >-
+    POST https://auth.lucidlink.com/oauth2/token with
+    `Authorization: Basic base64(CLIENT_ID:CLIENT_SECRET)`,
+    `Content-Type: application/x-www-form-urlencoded`, body `grant_type=client_credentials`.
+  request_header: 'Authorization: <access_token>'
+  request_header_note: >-
+    LucidLink's own published example sends the raw access token with no `Bearer` prefix on
+    this API. Recorded as published; it is not RFC 6750 form.
+  credential_issuance: >-
+    Not self-service. "The credentials are provided upon request sent to
+    support+ticket@lucidlink.com or by visiting https://support.lucidlink.com/hc/en-us."
+    (info.description of the published Swagger document.)
+  sources: [openapi/lucidlink-service-api.json]
+- name: service-account-bearer
+  api: LucidLink Management API v1 (self-hosted) and Web Service API v2
+  type: http
+  scheme: bearer
+  declared_in: documentation only — no published specification
+  request_header: 'Authorization: Bearer <service key>'
+  token_prefix: 'sa_live:'
+  token_prefix_source: LucidLink's published lucidlink-mcp README
+  issuance: >-
+    Workspace admins create service accounts in the "Service Accounts" tab of workspace
+    settings in the web or desktop app. Available to Business and Enterprise tiers; not
+    separately billed.
+  rotation: >-
+    A service account can hold multiple secret keys, so a new key can be issued and the old
+    one retired without interrupting service. `lucid rotate-credentials` (build 3.7.8468)
+    rotates the key used by the desktop daemon in place, without remounting the filespace.
+  display: Credentials are shown only once, at generation or rotation.
+  revocation: Deleting a service account immediately invalidates all of its credentials.
+  scope: >-
+    IMPORTANT — for the initial release a service account "inherits the full
+    permissions/scope of a workspace administrator, granting access to all available API
+    functionalities". There is no least-privilege option on a standard service account.
+  transport_warning: >-
+    The Management API container serves plain HTTP on port 3003. LucidLink's own
+    best-practices article requires putting it behind a TLS-terminating reverse proxy so the
+    bearer token is never sent in clear text, and restricting the port to trusted internal
+    systems.
+  sources:
+  - https://support.lucidlink.com/hc/en-us/articles/40222074543757-Getting-Started-with-Service-Accounts-API-Authentication
+  - https://support.lucidlink.com/hc/en-us/articles/40222376164365-Best-Practices-Operating-the-LucidLink-API-Container
+- name: collaborator-service-account
+  api: LucidLink Management API v1
+  type: http
+  scheme: bearer
+  status: beta
+  since: build 3.7.8584 (2026-08-08)
+  purpose: >-
+    Scope automation to specific LucidLink folders and filespaces "without handing out full
+    administrator credentials" — the least-privilege answer to the scope gap above.
+  availability: All plans including Trial.
+  note: >-
+    No UI in this beta; Collaborator Service Accounts are created and managed through the
+    LucidLink API itself.
+  sources:
+  - https://support.lucidlink.com/hc/en-us/articles/48014583746573-Collaborator-Service-Accounts-Beta
+end_user_identity:
+  sso:
+    protocol: SAML 2.0
+    providers: [Okta, Microsoft Entra ID / Azure AD, Google Workspace, OneLogin]
+    docs: https://support.lucidlink.com/hc/en-us/sections/31125114361741-Single-Sign-On-SAML
+  provisioning:
+    protocol: SCIM 2.0
+    docs: https://support.lucidlink.com/hc/en-us/articles/38861860730637-Understanding-SCIM-Integration-in-LucidLink
+    note: Requires SSO first. Google Workspace group provisioning is not supported.
+  mfa:
+    supported: true
+    scope: Two-factor authentication for non-SSO users
+    docs: https://support.lucidlink.com/hc/en-us/articles/44137711794189-Configure-Multi-Factor-Authentication-for-your-User-Account
+  proxy_auth:
+    kerberos: 'Windows only, since build 3.7.8468 (2026-07-11)'
+gaps:
+- No OAuth2 scopes are declared or documented — a client credential is all-or-nothing across domains, filespaces and billing including setPaymentDetails.
+- No RFC 8414 authorization-server metadata and no OIDC discovery document at auth.lucidlink.com (both probed, both 404).
+- No 401 or 403 response is declared on any operation in the published Swagger document, although the live API returns 401.
+- Standard service accounts carry full workspace-admin authority; least privilege is only available through the Collaborator Service Accounts beta.

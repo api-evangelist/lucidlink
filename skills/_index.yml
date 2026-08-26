@@ -1,0 +1,37 @@
+generated: '2026-08-25'
+method: generated
+source: >-
+  openapi/lucidlink-service-api.json (verified operationIds), mcp/lucidlink-mcp.yml (tool
+  names read from LucidLink's published lucidlink-mcp 0.3.0 wheel), and LucidLink's
+  published Management API endpoint reference at
+  https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
+description: >-
+  Packaged Agent Skills for LucidLink's three operable surfaces. Every operationId, HTTP
+  path and MCP tool name referenced in these skills was verified against a real artifact in
+  this repository or a published LucidLink document — none were invented. LucidLink
+  publishes no skills or AGENTS.md of its own; its GitHub org carries framework examples
+  (lucidlink-agentic-examples) but no packaged skill.
+provider_published_skills: none found
+skills:
+- file: lucidlink-provision-project-filespace.md
+  name: lucidlink-provision-project-filespace
+  api: LucidLink Service API
+  surface: public REST (OAuth2 client credentials)
+  operations: 4
+  summary: Provision, verify and understand the irreversibility of a project filespace.
+- file: lucidlink-onboard-team-member.md
+  name: lucidlink-onboard-team-member
+  api: LucidLink Management API (self-hosted)
+  surface: self-hosted REST (service-account bearer token)
+  operations: 14
+  summary: >-
+    Member, group and folder-permission lifecycle, including when SCIM owns the identity and
+    the API must not be used.
+- file: lucidlink-agent-filespace-session.md
+  name: lucidlink-agent-filespace-session
+  api: LucidLink MCP Server
+  surface: MCP stdio
+  operations: 25
+  summary: >-
+    A full agent working session against a shared filespace — orient, search, read, lock,
+    write, sync, and watch for changes.

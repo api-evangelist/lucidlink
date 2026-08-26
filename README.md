@@ -64,5 +64,20 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-LucidLink is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/lucidlink_stock/
+LucidLink Corp. is a cloud file-streaming company whose product is a "filespace" — a shared,
+cloud-native filesystem that mounts on macOS, Windows, Linux, iOS and Android and streams only
+the bytes an application actually asks for, so distributed teams can open multi-gigabyte media,
+design and AEC files directly from S3 object storage without syncing or downloading them first.
+
+LucidLink is built around a zero-knowledge encryption model in which the customer holds the keys,
+which shapes its developer surface: a public cloud Service API for domain, filespace and billing
+management (OAuth2 client-credentials, Swagger 2.0 reference published at api.lucidlink.com), a
+self-hosted Management API delivered as a Docker container so administrative calls never traverse
+LucidLink infrastructure, a beta Python SDK on PyPI, LucidLink Connect for linking external S3
+objects into a filespace, and a beta MCP server exposing 47 filespace tools to MCP-compatible agents.
+
+- https://www.lucidlink.com/
+- https://www.lucidlink.com/developer-platform
+- https://api.lucidlink.com/docs/api/v1/
+- https://www.lucidlink.com/mcp-server
+- https://github.com/LucidLink

@@ -1,0 +1,64 @@
+generated: '2026-08-25'
+method: searched
+source: https://trust.lucidlink.com/
+url: https://trust.lucidlink.com/
+platform: Conveyor
+http_status: 200
+summary: >-
+  LucidLink runs a public Trust Center at trust.lucidlink.com (hosted on Conveyor). The
+  landing page is anonymous and states "17 Documents, 507 FAQs, 7 Badges"; the documents
+  themselves (audit reports, pen-test summaries, subprocessor list) sit behind a "Get
+  Access" request, which is the normal posture for this class of portal.
+certifications:
+- name: SOC 2 Type I
+  evidence: badge listed on https://trust.lucidlink.com/
+- name: SOC 2 Type II
+  evidence: >-
+    badge listed on https://trust.lucidlink.com/ and announced at
+    https://www.lucidlink.com/newsroom/press-releases/Lucidlink-achieves-soc-2-type-2-compliance-and-tpn-blue-shield-certification
+- name: ISO 27001
+  evidence: badge listed on https://trust.lucidlink.com/
+- name: TPN (Trusted Partner Network)
+  evidence: >-
+    badge listed on https://trust.lucidlink.com/; TPN Blue Shield and later TPN Gold
+    announced at
+    https://www.lucidlink.com/newsroom/press-releases/lucidlink-earns-tpn-gold-certification
+- name: TPN Gold Shield
+  evidence: badge listed on https://trust.lucidlink.com/
+- name: GDPR
+  evidence: badge listed on https://trust.lucidlink.com/
+- name: CCPA
+  evidence: badge listed on https://trust.lucidlink.com/
+self_attested_controls:
+- One or more annual third-party audits
+- Annual third-party penetration testing
+- Disaster recovery plan
+- Subprocessor list available
+- Cyber insurance
+- Will enter into a DPA
+- Deletes customer data on request
+- Centralized IAM (SSO) for employee access
+knowledge_base_topics:
+- Overview (46 answers)
+- Access Management (50 answers)
+- Application and Data Security (84 answers)
+- Availability (13 answers)
+- Cloud Security (12 answers)
+- Compliance (51 answers)
+- Continuity and Disaster Recovery (24 answers)
+- Device Management (18 answers)
+- Encryption (2 answers)
+- ESG (18 answers)
+- Incident Management (20 answers)
+related:
+- https://www.lucidlink.com/security
+- https://www.lucidlink.com/sub-processors
+- https://www.lucidlink.com/dpa
+- https://www.lucidlink.com/legal-documents
+notes: >-
+  CORRECTION APPLIED 2026-08-25. probe-security-programs.py keyword-scraped the raw HTML
+  and reported HIPAA, FedRAMP, ISO 27017 and ISO 27018 as certifications. Those strings
+  occur only inside the Conveyor single-page-app's JavaScript payload — the full badge
+  vocabulary the platform can render — and not in the rendered page, which states "7
+  Badges" and enumerates exactly the seven recorded above. They have been removed rather
+  than credited to LucidLink.

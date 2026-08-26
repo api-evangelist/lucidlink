@@ -1,0 +1,109 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://pypi.org/pypi/lucidlink/json and https://pypi.org/pypi/lucidlink-mcp/json
+  (PyPI registry metadata, fetched 2026-08-25), plus
+  https://www.lucidlink.com/developer-platform and https://www.lucidlink.com/mcp-server
+summary: >-
+  LucidLink publishes two first-party packages, both on PyPI and both under a proprietary
+  licence. No first-party client library was found on npm, Maven Central, NuGet,
+  pkg.go.dev, RubyGems, Packagist or crates.io — the Developer Platform page names Python
+  as the only SDK language. The desktop/CLI client is distributed as a signed installer
+  from lucidlink.com/download, not through a language registry, and the self-hosted
+  Management API ships as a Docker image on Docker Hub.
+packages:
+- name: lucidlink
+  registry: pypi
+  url: https://pypi.org/project/lucidlink/
+  official: true
+  language: Python
+  description: >-
+    LucidLink Python SDK (beta) — programmatic access to LucidLink filespaces. High-level
+    wrapper over the LucidLink filesystem operations and the Connect API, with fsspec
+    integration, file locking, byte-range reads and cache control.
+  version: 0.13.0
+  published: '2026-08-11'
+  release_count: 7
+  requires_python: '>=3.10'
+  docs: https://lucidlink.github.io/lucidlink-python-sdk-examples/
+  source_examples: https://github.com/LucidLink/lucidlink-python-sdk-examples
+  status: beta
+- name: lucidlink-mcp
+  registry: pypi
+  url: https://pypi.org/project/lucidlink-mcp/
+  official: true
+  language: Python
+  description: >-
+    Model Context Protocol server for LucidLink filespaces. Launched by an MCP client via
+    `uvx lucidlink-mcp@latest`; exposes filespace read/write/search/lock/audit and
+    workspace-admin operations as MCP tools.
+  version: 0.3.0
+  published: '2026-08-18'
+  release_count: 5
+  requires_python: '>=3.10'
+  pins: lucidlink==0.12.0, mcp==2.0.0, watchdog==6.0.0
+  entry_points:
+  - lucidlink-mcp
+  - lucidlink-mcp-setup
+  status: beta
+  note: >-
+    Pins lucidlink==0.12.0 while the SDK itself is already at 0.13.0 — the MCP server is
+    one SDK minor behind its own sibling package as of 2026-08-25.
+- name: lucidlink-mcp-cloudflared
+  registry: pypi
+  url: https://pypi.org/project/lucidlink-mcp-cloudflared/
+  official: true
+  language: Python
+  description: >-
+    One-command public URL for the LucidLink MCP server via a Cloudflare quick tunnel.
+    Consumes lucidlink_mcp.http_mode (HttpOptions / serve_http) to expose the otherwise
+    loopback-bound HTTP transport to remote MCP clients.
+  version: 0.2.0
+  published: '2026-08-07'
+  release_count: 1
+  requires_python: '>=3.10'
+  pins: lucidlink-mcp>=0.2.2,<0.3
+  status: beta
+  note: >-
+    Its dependency pin (lucidlink-mcp <0.3) excludes the current lucidlink-mcp 0.3.0
+    released 2026-08-18, so the tunnel helper is incompatible with the latest MCP server
+    as published on 2026-08-25.
+- name: lucidlink/lucidlink-api
+  registry: dockerhub
+  url: https://hub.docker.com/r/lucidlink/lucidlink-api
+  official: true
+  language: container
+  description: >-
+    The self-hosted LucidLink Management API, distributed as a Docker image. Run with
+    `docker run -p 3003:3003 lucidlink/lucidlink-api:latest`.
+  version: null
+  published: null
+  note: >-
+    Docker Hub is not one of the language registries this pipeline queries for version
+    metadata, and the deployment guide pins only the floating `:latest` tag, so a consumer
+    cannot tell from the published instructions which build they are getting. LucidLink's
+    own best-practices article recommends pinning an explicit tag instead. Recorded as
+    version: null deliberately.
+absent_registries:
+- registry: npm
+  checked: true
+  result: >-
+    No first-party package. registry.npmjs.org returned 404 for lucidlink,
+    lucidlink-sdk, lucidlink-mcp and @lucidlink/sdk; the npm search index has 3 hits for
+    "lucidlink", all third-party (n8n-nodes-lucidlink and n8n-nodes-lucidlink-bridge,
+    published by charlesleighton, plus an unrelated CLI).
+- registry: maven-central
+  checked: true
+  result: search.maven.org solrsearch returned 0 results for "lucidlink"
+- registry: nuget
+  checked: true
+  result: NuGet query API returned totalHits 0 for "lucidlink"
+- registry: rubygems
+  checked: true
+  result: rubygems.org/api/v1/gems/lucidlink.json returned 404
+- registry: crates.io
+  checked: true
+  result: crates.io/api/v1/crates?q=lucidlink returned total 0
+- registry: pkg.go.dev
+  checked: true
+  result: proxy.golang.org returned 404 for github.com/lucidlink/

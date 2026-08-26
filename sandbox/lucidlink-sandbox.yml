@@ -1,0 +1,63 @@
+generated: '2026-08-25'
+method: searched
+source: >-
+  https://www.lucidlink.com/pricing, https://api.lucidlink.com/docs/api/v1/,
+  https://support.lucidlink.com/hc/en-us/articles/44957651982989-LucidLink-Developer-Platform,
+  https://www.lucidlink.com/mcp-server
+summary: >-
+  LucidLink publishes no test mode. There is no sandbox environment, no test-vs-live key
+  prefix pair, no fixture or trigger tooling and no time simulation — because the product
+  is a real encrypted filesystem over the customer's own object storage, not a transaction
+  processor with a simulatable ledger. What LucidLink offers instead is a real 30-day
+  trial workspace plus an interactive request console rendered from its own published spec.
+test_mode:
+  exists: false
+  key_prefixes:
+    live: 'sa_live: (service-account tokens, per the published lucidlink-mcp README)'
+    test: none published
+  note: >-
+    The only documented token prefix is sa_live:. No sa_test: or equivalent appears in the
+    docs or in LucidLink's published packages, which is consistent with there being no
+    separate test plane.
+trial:
+  available: true
+  duration: 30 days
+  credit_card_required: false
+  url: https://www.lucidlink.com/pricing
+  developer_platform_included: true
+  note: >-
+    All Developer Platform components — Python SDK, LucidLink API and LucidLink Connect —
+    are explicitly available during trial. The MCP Server page adds that existing LucidLink
+    customers still need a free trial account to access Developer Tools, so the trial is the
+    intended evaluation path for the whole developer surface.
+console:
+  available: true
+  type: Swagger UI (interactive "try it out")
+  url: https://api.lucidlink.com/docs/api/v1/
+  anonymous: false
+  note: >-
+    The public reference is a live Swagger UI rendered from the spec saved in
+    openapi/lucidlink-service-api.json. Requests can be executed from the browser once
+    OAuth2 client credentials are supplied — and those are not self-service; the reference
+    itself says they are issued on request via support+ticket@lucidlink.com.
+self_hosted_console:
+  available: true
+  url: http://localhost:3003/api/v1/docs
+  note: >-
+    The Management API container generates and serves its own Swagger UI, so an operator who
+    runs the container gets a full interactive console against their own workspace. That is
+    the closest thing LucidLink has to a developer sandbox, but it acts on live data.
+test_data:
+  test_cards: not applicable — LucidLink does not process payments through its API
+  magic_identifiers: none published
+  fixtures: none published
+  time_simulation: none published
+mcp_safety_substitutes:
+  note: >-
+    For the agent surface, LucidLink substitutes safety controls for a sandbox: a read-only
+    mode (LUCIDLINK_MCP_READ_ONLY), dangerous-action confirmation, per-tool
+    read_only/additive/destructive/stateful annotations, and Collaborator Service Accounts
+    (beta) that scope automation to specific folders instead of handing over full admin
+    credentials. Its own guidance is to mint a token "for a filespace you can safely test
+    in" — a user-provisioned test filespace, not a vendor-provided one.
+  docs: https://www.lucidlink.com/mcp-server

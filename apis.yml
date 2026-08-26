@@ -1,23 +1,175 @@
 aid: lucidlink
 name: LucidLink
-description: 'LucidLink is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  LucidLink Corp. is a cloud file-streaming company whose product is a "filespace" —
+  a shared, cloud-native filesystem that mounts on macOS, Windows, Linux, iOS and
+  Android and streams only the bytes an application actually asks for, so distributed
+  teams can open multi-gigabyte media, design and AEC files directly from S3 object
+  storage without syncing or downloading them first. LucidLink is built around a
+  zero-knowledge encryption model in which the customer holds the keys, which shapes
+  its developer surface: the LucidLink Developer Platform ships a public cloud Service
+  API for domain, filespace and billing management (OAuth2 client-credentials, Swagger
+  2.0 reference published at api.lucidlink.com), a self-hosted Management API delivered
+  as a Docker container so administrative calls never traverse LucidLink infrastructure,
+  a beta Python SDK on PyPI, LucidLink Connect for linking external S3 objects into a
+  filespace, and a beta MCP server that exposes filespace read, write, search, locking
+  and audit operations as tools for MCP-compatible agents.
 url: https://raw.githubusercontent.com/api-evangelist/lucidlink/refs/heads/main/apis.yml
+image: https://dhgs2q3hgrx0j.cloudfront.net/lucidlink_logo_846354e8f3.png
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
 - Company
-apis: []
+- Cloud Storage
+- File Streaming
+- File Collaboration
+- Media and Entertainment
+- Object Storage
+- Developer Platform
+- MCP
+- Agentic AI
+- Zero-Knowledge Encryption
+- Identity and Access Management
+apis:
+- name: LucidLink Service API
+  description: >-
+    The public, LucidLink-hosted REST API for managing domains, filespaces and billing.
+    Organized around REST with JSON request/response bodies and OAuth2 client-credentials
+    authentication against https://auth.lucidlink.com/oauth2/token. A Swagger 2.0
+    reference is published by LucidLink at api.lucidlink.com/docs/api/v1/.
+  humanURL: https://api.lucidlink.com/docs/api/v1/
+  baseURL: https://api.lucidlink.com/api/v1
+  tags:
+  - Filespaces
+  - Domains
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/lucidlink-service-api.json
+  - type: APIReference
+    url: https://api.lucidlink.com/docs/api/v1/
+  - type: Overlay
+    url: overlays/lucidlink-service-api-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/lucidlink-problem-types.yml
+  - type: DataModel
+    url: data-model/lucidlink-data-model.yml
+- name: LucidLink Management API
+  description: >-
+    The self-hosted administrative REST API for the new LucidLink platform, delivered as
+    the lucidlink/lucidlink-api Docker image and run on customer infrastructure so that
+    LucidLink's zero-knowledge model is preserved. Covers members, groups, permissions,
+    filespaces, directory entries, direct links, storage providers and health. Auth is a
+    service-account secret key sent as an Authorization Bearer token. Interactive Swagger
+    documentation is generated and served by the container itself at /api/v1/docs, so the
+    OpenAPI document is only reachable once the container is running on the customer host.
+  humanURL: https://support.lucidlink.com/hc/en-us/articles/40221355571725-LucidLink-API-Overview
+  baseURL: http://{api-container-host}:3003/api/v1
+  tags:
+  - Members
+  - Groups
+  - Permissions
+  - Filespaces
+  - Directories
+  properties:
+  - type: Documentation
+    url: https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
+  - type: GettingStarted
+    url: https://support.lucidlink.com/hc/en-us/articles/40221700126605-Deployment-Usage-LucidLink-API-Container
+- name: LucidLink Web Service API v2
+  description: >-
+    The LucidLink-hosted workspace web service used by the LucidLink apps and by the
+    admin tool surface of the official LucidLink MCP server. Exposes service accounts,
+    workspaces, members, groups, filespaces and member roles under /api/v2. Authenticated
+    with a service-account bearer token; LucidLink publishes no standalone reference for
+    it, so the endpoint inventory recorded here was read from LucidLink's own published
+    lucidlink-mcp package and confirmed against live 401 responses.
+  humanURL: https://www.lucidlink.com/developer-platform
+  baseURL: https://api.lucidlink.com/api/v2
+  tags:
+  - Workspaces
+  - Members
+  - Groups
+  - Service Accounts
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: TrustCenter
+  url: security/lucidlink-trust-center.yml
+- type: OAuthScopes
+  url: scopes/lucidlink-scopes.yml
 - type: Website
-  url: https://forgeglobal.com/lucidlink_stock/
+  url: https://www.lucidlink.com/
+- type: DeveloperPortal
+  url: https://www.lucidlink.com/developer-platform
+- type: Documentation
+  url: https://support.lucidlink.com/hc/en-us/sections/45107391668493-LucidLink-Developer-Platform
+- type: APIReference
+  url: https://api.lucidlink.com/docs/api/v1/
+- type: GettingStarted
+  url: https://support.lucidlink.com/hc/en-us/articles/40221700126605-Deployment-Usage-LucidLink-API-Container
+- type: Support
+  url: https://support.lucidlink.com/hc/en-us
+- type: Blog
+  url: https://www.lucidlink.com/blog
+- type: GitHubOrganization
+  url: https://github.com/LucidLink
+- type: Pricing
+  url: https://www.lucidlink.com/pricing
+- type: SignUp
+  url: https://app.lucidlink.com/register
+- type: Login
+  url: https://app.lucidlink.com/login
+- type: TermsOfService
+  url: https://www.lucidlink.com/terms
+- type: PrivacyPolicy
+  url: https://www.lucidlink.com/privacy
+- type: StatusPage
+  url: https://status.lucidlink.com/
+- type: Compliance
+  url: https://trust.lucidlink.com/
+- type: ChangeLog
+  url: https://support.lucidlink.com/hc/en-us/sections/31125638256269-Release-notes
+- type: Plans
+  url: plans/lucidlink-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/lucidlink-rate-limits.yml
+- type: Authentication
+  url: authentication/lucidlink-authentication.yml
+- type: Conventions
+  url: conventions/lucidlink-conventions.yml
+- type: Lifecycle
+  url: lifecycle/lucidlink-lifecycle.yml
+- type: ChangeLog
+  url: changelog/lucidlink-changelog.yml
+- type: CLI
+  url: cli/lucidlink-cli.yml
+- type: Packages
+  url: packages/lucidlink-packages.yml
+- type: SDKs
+  url: packages/lucidlink-packages.yml
+- type: MCPServer
+  url: mcp/lucidlink-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/lucidlink-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/lucidlink-llms.txt
+- type: Conformance
+  url: conformance/lucidlink-conformance.yml
+- type: DomainSecurity
+  url: security/lucidlink-domain-security.yml
+- type: Sandbox
+  url: sandbox/lucidlink-sandbox.yml
+x-enrichment:
+  date: '2026-08-25'
+  status: enriched
+  artifacts_added: 25
+  pass: local-v1
