@@ -34,38 +34,14 @@ tags:
 - Zero-Knowledge Encryption
 - Identity and Access Management
 apis:
-- name: LucidLink Service API
-  description: >-
-    The public, LucidLink-hosted REST API for managing domains, filespaces and billing.
-    Organized around REST with JSON request/response bodies and OAuth2 client-credentials
-    authentication against https://auth.lucidlink.com/oauth2/token. A Swagger 2.0
-    reference is published by LucidLink at api.lucidlink.com/docs/api/v1/.
-  humanURL: https://api.lucidlink.com/docs/api/v1/
-  baseURL: https://api.lucidlink.com/api/v1
-  tags:
-  - Filespaces
-  - Domains
-  - Billing
-  properties:
-  - type: OpenAPI
-    url: openapi/lucidlink-service-api.json
-  - type: APIReference
-    url: https://api.lucidlink.com/docs/api/v1/
-  - type: Overlay
-    url: overlays/lucidlink-service-api-overlay.yaml
-  - type: ErrorCatalog
-    url: errors/lucidlink-problem-types.yml
-  - type: DataModel
-    url: data-model/lucidlink-data-model.yml
 - name: LucidLink Management API
   description: >-
-    The self-hosted administrative REST API for the new LucidLink platform, delivered as
-    the lucidlink/lucidlink-api Docker image and run on customer infrastructure so that
-    LucidLink's zero-knowledge model is preserved. Covers members, groups, permissions,
-    filespaces, directory entries, direct links, storage providers and health. Auth is a
-    service-account secret key sent as an Authorization Bearer token. Interactive Swagger
-    documentation is generated and served by the container itself at /api/v1/docs, so the
-    OpenAPI document is only reachable once the container is running on the customer host.
+    The self-hosted administrative REST API for the new LucidLink platform, delivered as the lucidlink/lucidlink-api
+    Docker image and run on customer infrastructure so that LucidLink's zero-knowledge model is preserved.
+    Covers members, groups, permissions, filespaces, directory entries, direct links, storage providers
+    and health. Auth is a service-account secret key sent as an Authorization Bearer token. Interactive
+    Swagger documentation is generated and served by the container itself at /api/v1/docs, so the OpenAPI
+    document is only reachable once the container is running on the customer host.
   humanURL: https://support.lucidlink.com/hc/en-us/articles/40221355571725-LucidLink-API-Overview
   baseURL: http://{api-container-host}:3003/api/v1
   tags:
@@ -76,17 +52,18 @@ apis:
   - Directories
   properties:
   - type: Documentation
-    url: https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
+    url: >-
+      https://support.lucidlink.com/hc/en-us/articles/40235274774797-API-Key-Functionalities-Common-Automation-Scenarios
   - type: GettingStarted
-    url: https://support.lucidlink.com/hc/en-us/articles/40221700126605-Deployment-Usage-LucidLink-API-Container
+    url: >-
+      https://support.lucidlink.com/hc/en-us/articles/40221700126605-Deployment-Usage-LucidLink-API-Container
 - name: LucidLink Web Service API v2
   description: >-
-    The LucidLink-hosted workspace web service used by the LucidLink apps and by the
-    admin tool surface of the official LucidLink MCP server. Exposes service accounts,
-    workspaces, members, groups, filespaces and member roles under /api/v2. Authenticated
-    with a service-account bearer token; LucidLink publishes no standalone reference for
-    it, so the endpoint inventory recorded here was read from LucidLink's own published
-    lucidlink-mcp package and confirmed against live 401 responses.
+    The LucidLink-hosted workspace web service used by the LucidLink apps and by the admin tool surface
+    of the official LucidLink MCP server. Exposes service accounts, workspaces, members, groups, filespaces
+    and member roles under /api/v2. Authenticated with a service-account bearer token; LucidLink publishes
+    no standalone reference for it, so the endpoint inventory recorded here was read from LucidLink's
+    own published lucidlink-mcp package and confirmed against live 401 responses.
   humanURL: https://www.lucidlink.com/developer-platform
   baseURL: https://api.lucidlink.com/api/v2
   tags:
@@ -94,12 +71,62 @@ apis:
   - Members
   - Groups
   - Service Accounts
+- aid: lucidlink:lucidlink-billing-api
+  name: LucidLink Billing API
+  description: Billing operations.
+  humanURL: https://api.lucidlink.com/docs/api/v1/
+  baseURL: https://api.lucidlink.com/api/v1
+  tags:
+  - billing
+  properties:
+  - type: OpenAPI
+    url: openapi/lucidlink-billing-api-openapi.yml
+  - type: APIReference
+    url: https://api.lucidlink.com/docs/api/v1/
+  - type: ErrorCatalog
+    url: errors/lucidlink-problem-types.yml
+  - type: DataModel
+    url: data-model/lucidlink-data-model.yml
+- aid: lucidlink:lucidlink-domain-api
+  name: LucidLink Domain API
+  description: Domain operations.
+  humanURL: https://api.lucidlink.com/docs/api/v1/
+  baseURL: https://api.lucidlink.com/api/v1
+  tags:
+  - domain
+  properties:
+  - type: OpenAPI
+    url: openapi/lucidlink-domain-api-openapi.yml
+  - type: APIReference
+    url: https://api.lucidlink.com/docs/api/v1/
+  - type: ErrorCatalog
+    url: errors/lucidlink-problem-types.yml
+  - type: DataModel
+    url: data-model/lucidlink-data-model.yml
+- aid: lucidlink:lucidlink-filespace-api
+  name: LucidLink Filespace API
+  description: Filespace operations.
+  humanURL: https://api.lucidlink.com/docs/api/v1/
+  baseURL: https://api.lucidlink.com/api/v1
+  tags:
+  - filespace
+  properties:
+  - type: OpenAPI
+    url: openapi/lucidlink-filespace-api-openapi.yml
+  - type: APIReference
+    url: https://api.lucidlink.com/docs/api/v1/
+  - type: ErrorCatalog
+    url: errors/lucidlink-problem-types.yml
+  - type: DataModel
+    url: data-model/lucidlink-data-model.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/lucidlink-service-api-overlay.yaml
 - type: TrustCenter
   url: security/lucidlink-trust-center.yml
 - type: OAuthScopes
