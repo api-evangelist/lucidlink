@@ -15,6 +15,18 @@ description: >-
   filespace, and a beta MCP server that exposes filespace read, write, search, locking
   and audit operations as tools for MCP-compatible agents.
 url: https://raw.githubusercontent.com/api-evangelist/lucidlink/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://dhgs2q3hgrx0j.cloudfront.net/lucidlink_logo_846354e8f3.png
 x-type: company
 x-source: harvest:secondary-market
