@@ -58,6 +58,12 @@ apis:
   baseURL: http://{api-container-host}:3003/api/v1
   tags:
   - Members
+  - Group
+  - Permissions
+  - Filespaces
+  - Directories
+  tags_raw:
+  - Members
   - Groups
   - Permissions
   - Filespaces
@@ -81,6 +87,11 @@ apis:
   tags:
   - Workspaces
   - Members
+  - Group
+  - Service Accounts
+  tags_raw:
+  - Workspaces
+  - Members
   - Groups
   - Service Accounts
 - aid: lucidlink:lucidlink-billing-api
@@ -89,6 +100,8 @@ apis:
   humanURL: https://api.lucidlink.com/docs/api/v1/
   baseURL: https://api.lucidlink.com/api/v1
   tags:
+  - Billing
+  tags_raw:
   - billing
   properties:
   - type: OpenAPI
@@ -105,6 +118,8 @@ apis:
   humanURL: https://api.lucidlink.com/docs/api/v1/
   baseURL: https://api.lucidlink.com/api/v1
   tags:
+  - Domain
+  tags_raw:
   - domain
   properties:
   - type: OpenAPI
