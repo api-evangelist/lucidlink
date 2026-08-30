@@ -1,0 +1,315 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: LucidLink Service API Reference Filespace API
+  description: "The LucidLink API is organized around REST. \nThe API has predictable resource-oriented URLs, works with JSON-encoded request and response bodies and uses standard-based verbs (HTTP), responses and authentication. \nThe authentication uses OAuth2 Client Credentials Grant Type. The credentials are provided upon request sent to support+ticket@lucidlink.com or by visiting https://support.lucidlink.com/hc/en-us.\n\nHere is an example bash script to retrieve an access token and send an API request.\n```sh\n  #!/bin/bash\n  CLIENT_ID=...\n  CLIENT_SECRET=...\n  TOKEN_ENDPOINT=https://auth.lucidlink.com/oauth2/token\n  API_ENDPOINT=https://api.lucidlink.com/v1\n\n  # Encode client credentials in base64 before exchanging them for a token.\n  CLIENT_CREDENTIALS=$(echo -n $CLIENT_ID:$CLIENT_SECRET | base64 -w 0)\n\n  # Retrieve your access token.\n  ACCESS_TOKEN=$(curl $TOKEN_ENDPOINT \\\n      --http1.0 \\\n      -X POST \\\n      -H 'Content-Type: application/x-www-form-urlencoded' \\\n      -H \"Authorization: Basic $CLIENT_CREDENTIALS\" \\\n      -d 'grant_type=client_credentials' -s | jq -r '.access_token')\n\n  # Use the token to interact with the API\n  sendApiRequest()\n  {\n      echo $(curl $API_ENDPOINT/$1 \\\n          -X GET \\\n          -H \"Authorization: $ACCESS_TOKEN\" \\\n          -H \"Content-Type: application/json\" -s)\n  }\n  sendApiRequest \"domains\"\n```\n"
+servers:
+- url: /api/v1
+security:
+- standard: []
+tags:
+- name: filespace
+  description: Filespace operations.
+paths:
+  /filespaces:
+    x-swagger-router-controller: Filespace
+    post:
+      tags:
+      - filespace
+      summary: Create a filespace.
+      operationId: createFilespace
+      responses:
+        '201':
+          description: The filespace object that has been created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filespace'
+        '400':
+          description: Invalid request. Check filespace model definition.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '409':
+          description: Filespace name already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conflict'
+        '422':
+          description: Filespace creation is currently disabled in the selected region.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableEntity'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Filespace'
+        description: Filespace object to be created
+        required: true
+    get:
+      tags:
+      - filespace
+      summary: Get a list of filespaces.
+      operationId: getFilespaces
+      parameters:
+      - in: query
+        name: qualifiedName
+        description: Fully-qualified name of a filespace to search for.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A list of filespaces.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Filespace'
+  /filespaces/{id}:
+    x-swagger-router-controller: Filespace
+    get:
+      tags:
+      - filespace
+      summary: Retrieve a filespace.
+      operationId: getFilespace
+      parameters:
+      - in: path
+        name: id
+        description: ID of the filespace to be retrieved.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The filespace object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Filespace'
+        '400':
+          description: Invalid filespace ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Filespace not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+    delete:
+      tags:
+      - filespace
+      summary: Delete a filespace.
+      operationId: deleteFilespace
+      parameters:
+      - in: path
+        name: id
+        description: ID of the filespace to be deleted.
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Success.
+        '400':
+          description: Invalid filespace ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Filespace not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '409':
+          description: Cannot delete filespace while in status `provisioning`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+components:
+  schemas:
+    FilespaceStats:
+      required:
+      - filespaceSize
+      properties:
+        usedStorage:
+          type: number
+          description: '[bytes] Object storage bucket size. Includes snapshots data. Storage is billed based on this metric.'
+        filespaceSize:
+          type: number
+          description: '[bytes] Filespace size as seen by the operating system.'
+        getRequestCount:
+          type: number
+          description: Number of object storage GET requests since Filespace creation.
+        getDataSize:
+          type: number
+          description: '[bytes] Data read from the object storage since Filespace creation.'
+        putRequestCount:
+          type: number
+          description: Number of object storage PUT requests since Filespace creation.
+        listRequestCount:
+          type: number
+          description: Number of object storage LIST requests since Filespace creation.
+        deleteRequestCount:
+          type: number
+          description: Number of object storage DELETE requests since Filespace creation.
+        putDataSize:
+          type: number
+          description: '[bytes] Data written to the object storage since Filespace creation.'
+    UnprocessableEntity:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 422
+        message:
+          type: string
+    Filespace:
+      required:
+      - domain
+      - name
+      - storage
+      properties:
+        id:
+          type: string
+          readOnly: true
+        domain:
+          description: Domain ID.
+          type: string
+        name:
+          type: string
+          description: Unique within a domain. Lowercase letters, numbers or hyphens. Minimum 2 chars.
+        version:
+          type: number
+          description: 'Optional filespace version. Possible values are:
+
+            - 3 - without metadata streaming support.
+
+            - 4 - metadata streaming support.
+
+            Default value is 3
+
+            '
+        status:
+          type: string
+          enum:
+          - provisioning
+          - provisioned
+          - initialized
+          - error
+          readOnly: true
+        subscriptionType:
+          type: string
+          description: 'Optional filespace subscription type. Possible values per storage providers are:
+
+            - ''basic'' - Wasabi storage provider and lucidlink storage owner.
+
+            - ''teams'' or ''enterprise'' - IBM storage provider and lucidlink storage owner. Defaults to ''teams''.
+
+            - ''custom'' - custom storage provider and customer storage owner.
+
+            - ''none'' - used to flag filespaces created prior to Feb 2021.
+
+            '
+          enum:
+          - custom
+          - basic
+          - teams
+          - enterprise
+          - none
+        usersCount:
+          type: number
+          description: Number of provisioned users for this Filespace.
+        storage:
+          $ref: '#/components/schemas/FilespaceStorage'
+        stats:
+          allOf:
+          - $ref: '#/components/schemas/FilespaceStats'
+          readOnly: true
+    Conflict:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 409
+        message:
+          type: string
+    FilespaceStorage:
+      required:
+      - provider
+      properties:
+        owner:
+          type: string
+          enum:
+          - customer
+          - lucidlink
+        provider:
+          type: string
+          enum:
+          - Azure
+          - AWS
+          - AWSGovCloud
+          - Alibaba
+          - GCP
+          - Zadara
+          - Cloudian
+          - DigitalOcean
+          - Wasabi
+          - Scality
+          - Telefonica
+          - Exoscale
+          - Nutanix
+          - Pure
+          - Dell
+          - IBM
+          - Other
+        region:
+          description: Region is dependent on `provider`
+          type: string
+        endpoint:
+          description: Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.
+          type: string
+        bucket:
+          type: string
+          description: Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars.
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+  securitySchemes:
+    standard:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://auth.lucidlink.com/oauth2/token

@@ -1,0 +1,292 @@
+openapi: 3.2.0
+info:
+  version: 1.0.0
+  title: LucidLink Service API Reference Billing API
+  description: "The LucidLink API is organized around REST. \nThe API has predictable resource-oriented URLs, works with JSON-encoded request and response bodies and uses standard-based verbs (HTTP), responses and authentication. \nThe authentication uses OAuth2 Client Credentials Grant Type. The credentials are provided upon request sent to support+ticket@lucidlink.com or by visiting https://support.lucidlink.com/hc/en-us.\n\nHere is an example bash script to retrieve an access token and send an API request.\n```sh\n  #!/bin/bash\n  CLIENT_ID=...\n  CLIENT_SECRET=...\n  TOKEN_ENDPOINT=https://auth.lucidlink.com/oauth2/token\n  API_ENDPOINT=https://api.lucidlink.com/v1\n\n  # Encode client credentials in base64 before exchanging them for a token.\n  CLIENT_CREDENTIALS=$(echo -n $CLIENT_ID:$CLIENT_SECRET | base64 -w 0)\n\n  # Retrieve your access token.\n  ACCESS_TOKEN=$(curl $TOKEN_ENDPOINT \\\n      --http1.0 \\\n      -X POST \\\n      -H 'Content-Type: application/x-www-form-urlencoded' \\\n      -H \"Authorization: Basic $CLIENT_CREDENTIALS\" \\\n      -d 'grant_type=client_credentials' -s | jq -r '.access_token')\n\n  # Use the token to interact with the API\n  sendApiRequest()\n  {\n      echo $(curl $API_ENDPOINT/$1 \\\n          -X GET \\\n          -H \"Authorization: $ACCESS_TOKEN\" \\\n          -H \"Content-Type: application/json\" -s)\n  }\n  sendApiRequest \"domains\"\n```\n"
+servers:
+- url: /api/v1
+security:
+- standard: []
+tags:
+- name: billing
+  description: Billing operations.
+paths:
+  /billing/payment:
+    x-swagger-router-controller: Billing
+    patch:
+      tags:
+      - billing
+      summary: Set payment details.
+      operationId: setPaymentDetails
+      responses:
+        '200':
+          description: Success.
+        '400':
+          description: Invalid request. Check billing model definition.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentDetails'
+        description: Payment details to set for the account.
+        required: true
+    get:
+      tags:
+      - billing
+      summary: Get payment details.
+      operationId: getPaymentDetails
+      responses:
+        '200':
+          description: Payment details for the account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetails'
+  /billing/current-period:
+    x-swagger-router-controller: Billing
+    get:
+      tags:
+      - billing
+      summary: Get details about current billing period.
+      operationId: getCurrentPeriod
+      responses:
+        '200':
+          description: Details about current billing period.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingPeriod'
+  /billing/invoices:
+    x-swagger-router-controller: Billing
+    get:
+      tags:
+      - billing
+      summary: Get a list of issued invoices.
+      operationId: getInvoices
+      responses:
+        '200':
+          description: A list of issued invoices.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+  /billing/invoices/{id}/breakdown/csv:
+    x-swagger-router-controller: Billing
+    get:
+      tags:
+      - billing
+      summary: Retrieve an invoice amount due breakdown by filespace.
+      operationId: getInvoiceBreakdownPerFilespace
+      parameters:
+      - name: id
+        in: path
+        description: ID of the invoice.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The invoice breakdown per filespace in CSV format.
+        '404':
+          description: Invoice not found.
+          content:
+            text/csv:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+components:
+  schemas:
+    PaymentDetails:
+      properties:
+        description:
+          type: string
+        paymentSourceToken:
+          type: string
+        card:
+          $ref: '#/components/schemas/Card'
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    Invoice:
+      required:
+      - id
+      - date
+      - lineDescriptions
+      - amountDue
+      - currency
+      - paymentStatus
+      - pdfUrl
+      - periodStart
+      - periodEnd
+      properties:
+        id:
+          type: string
+        date:
+          type: number
+          example: 1549886746000
+        lineDescriptions:
+          type: array
+          items:
+            type: string
+        amountDue:
+          type: number
+        currency:
+          type: string
+        periodStart:
+          type: number
+        periodEnd:
+          type: number
+        paymentStatus:
+          type: string
+          enum:
+          - not_paid
+          - past_due
+          - paid
+          - voided
+        pdfUrl:
+          type: string
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItem'
+    FilespaceLineItemWithForecast:
+      allOf:
+      - $ref: '#/components/schemas/FilespaceLineItem'
+      - properties:
+          amountDueForecast:
+            description: Filespace amount due forecast
+            type: number
+        required:
+        - amountDueForecast
+    FilespaceLineItem:
+      required:
+      - filespace
+      - amountDue
+      - usageByDimension
+      - isDeleted
+      - name
+      - storageOwner
+      properties:
+        filespace:
+          type: string
+          description: Filespace ID
+        amountDue:
+          type: number
+          description: Filespace amount due(fraction of the invoice amount due).
+        isDeleted:
+          type: boolean
+          description: Whether the filespace was deleted during the period or not.
+        name:
+          type: string
+          description: Filespace name.
+        storageProvider:
+          type: string
+        storageOwner:
+          type: string
+          enum:
+          - lucidlink
+          - customer
+        subscriptionType:
+          type: string
+          enum:
+          - basic
+          - teams
+          - advanced
+          - custom
+          - none
+        usageByDimension:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceUsage'
+          example:
+          - dimension: ManagedCapacity
+            usage: 2048
+          - dimension: FilespaceUsers
+            usage: 10
+    Card:
+      required:
+      - numberLast4
+      - expiryMonth
+      - expiryYear
+      properties:
+        numberLast4:
+          type: string
+        expiryMonth:
+          type: number
+        expiryYear:
+          type: number
+    BillingPeriod:
+      required:
+      - start
+      - end
+      - subscriptionStatus
+      - amountDue
+      - amountDueForecast
+      - currency
+      properties:
+        start:
+          type: number
+        end:
+          type: number
+        subscriptionStatus:
+          type: string
+        amountDue:
+          type: number
+          description: Amount due to date within the current period in cents.
+        amountDueForecast:
+          type: number
+          description: Forecast amount due to end of period in cents.
+        currency:
+          type: string
+        trialDays:
+          type: number
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItemWithForecast'
+    FilespaceUsage:
+      required:
+      - usage
+      - dimension
+      properties:
+        usage:
+          type: number
+          description: Usage amount.
+        dimension:
+          type: string
+          description: Usage dimension. Based on the billing plan package.
+          enum:
+          - ManagedCapacity
+          - FilespaceUsers
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+  securitySchemes:
+    standard:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: https://auth.lucidlink.com/oauth2/token
