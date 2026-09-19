@@ -102,7 +102,7 @@ apis:
   humanURL: https://www.lucidlink.com/developer-platform
   baseURL: https://api.lucidlink.com/api/v2
   tags:
-  - Workspaces
+  - Workspace
   - Members
   - Group
   - Service Accounts
