@@ -1,0 +1,24 @@
+{
+  "provider": "lucidlink",
+  "sources": [
+    "_original/lucidlink-service-api.json"
+  ],
+  "outputs": [
+    "lucidlink-billing-api-openapi.yml",
+    "lucidlink-domain-api-openapi.yml",
+    "lucidlink-filespace-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "lucidlink-service-api.json: upgraded swagger 2.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "lucidlink-billing-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lucidlink-domain-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lucidlink-filespace-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
