@@ -101,59 +101,18 @@ paths:
                 $ref: '#/components/schemas/NotFound'
 components:
   schemas:
-    FilespaceLineItemWithForecast:
-      allOf:
-      - $ref: '#/components/schemas/FilespaceLineItem'
-      - properties:
-          amountDueForecast:
-            description: Filespace amount due forecast
-            type: number
-        required:
-        - amountDueForecast
-    BillingPeriod:
+    Card:
       required:
-      - start
-      - end
-      - subscriptionStatus
-      - amountDue
-      - amountDueForecast
-      - currency
+      - numberLast4
+      - expiryMonth
+      - expiryYear
       properties:
-        start:
-          type: number
-        end:
-          type: number
-        subscriptionStatus:
+        numberLast4:
           type: string
-        amountDue:
+        expiryMonth:
           type: number
-          description: Amount due to date within the current period in cents.
-        amountDueForecast:
+        expiryYear:
           type: number
-          description: Forecast amount due to end of period in cents.
-        currency:
-          type: string
-        trialDays:
-          type: number
-        filespaceBreakdown:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/FilespaceLineItemWithForecast'
-    FilespaceUsage:
-      required:
-      - usage
-      - dimension
-      properties:
-        usage:
-          type: number
-          description: Usage amount.
-        dimension:
-          type: string
-          description: Usage dimension. Based on the billing plan package.
-          enum:
-          - ManagedCapacity
-          - FilespaceUsers
     FilespaceLineItem:
       required:
       - filespace
@@ -210,6 +169,69 @@ components:
           example: 404
         message:
           type: string
+    FilespaceLineItemWithForecast:
+      allOf:
+      - $ref: '#/components/schemas/FilespaceLineItem'
+      - properties:
+          amountDueForecast:
+            description: Filespace amount due forecast
+            type: number
+        required:
+        - amountDueForecast
+    FilespaceUsage:
+      required:
+      - usage
+      - dimension
+      properties:
+        usage:
+          type: number
+          description: Usage amount.
+        dimension:
+          type: string
+          description: Usage dimension. Based on the billing plan package.
+          enum:
+          - ManagedCapacity
+          - FilespaceUsers
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+    BillingPeriod:
+      required:
+      - start
+      - end
+      - subscriptionStatus
+      - amountDue
+      - amountDueForecast
+      - currency
+      properties:
+        start:
+          type: number
+        end:
+          type: number
+        subscriptionStatus:
+          type: string
+        amountDue:
+          type: number
+          description: Amount due to date within the current period in cents.
+        amountDueForecast:
+          type: number
+          description: Forecast amount due to end of period in cents.
+        currency:
+          type: string
+        trialDays:
+          type: number
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItemWithForecast'
     PaymentDetails:
       properties:
         description:
@@ -218,18 +240,6 @@ components:
           type: string
         card:
           $ref: '#/components/schemas/Card'
-    Card:
-      required:
-      - numberLast4
-      - expiryMonth
-      - expiryYear
-      properties:
-        numberLast4:
-          type: string
-        expiryMonth:
-          type: number
-        expiryYear:
-          type: number
     Invoice:
       required:
       - id
@@ -273,16 +283,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/FilespaceLineItem'
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
-        message:
-          type: string
   securitySchemes:
     standard:
       type: oauth2

@@ -138,6 +138,92 @@ paths:
                 $ref: '#/components/schemas/NotFound'
 components:
   schemas:
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+    FilespaceStorage:
+      required:
+      - provider
+      properties:
+        owner:
+          type: string
+          enum:
+          - customer
+          - lucidlink
+        provider:
+          type: string
+          enum:
+          - Azure
+          - AWS
+          - AWSGovCloud
+          - Alibaba
+          - GCP
+          - Zadara
+          - Cloudian
+          - DigitalOcean
+          - Wasabi
+          - Scality
+          - Telefonica
+          - Exoscale
+          - Nutanix
+          - Pure
+          - Dell
+          - IBM
+          - Other
+        region:
+          description: Region is dependent on `provider`
+          type: string
+        endpoint:
+          description: Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.
+          type: string
+        bucket:
+          type: string
+          description: Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars.
+    FilespaceStats:
+      required:
+      - filespaceSize
+      properties:
+        usedStorage:
+          type: number
+          description: '[bytes] Object storage bucket size. Includes snapshots data. Storage is billed based on this metric.'
+        filespaceSize:
+          type: number
+          description: '[bytes] Filespace size as seen by the operating system.'
+        getRequestCount:
+          type: number
+          description: Number of object storage GET requests since Filespace creation.
+        getDataSize:
+          type: number
+          description: '[bytes] Data read from the object storage since Filespace creation.'
+        putRequestCount:
+          type: number
+          description: Number of object storage PUT requests since Filespace creation.
+        listRequestCount:
+          type: number
+          description: Number of object storage LIST requests since Filespace creation.
+        deleteRequestCount:
+          type: number
+          description: Number of object storage DELETE requests since Filespace creation.
+        putDataSize:
+          type: number
+          description: '[bytes] Data written to the object storage since Filespace creation.'
     Conflict:
       required:
       - status
@@ -146,6 +232,16 @@ components:
         status:
           type: number
           example: 409
+        message:
+          type: string
+    UnprocessableEntity:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 422
         message:
           type: string
     Filespace:
@@ -210,102 +306,6 @@ components:
           allOf:
           - $ref: '#/components/schemas/FilespaceStats'
           readOnly: true
-    NotFound:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 404
-        message:
-          type: string
-    FilespaceStats:
-      required:
-      - filespaceSize
-      properties:
-        usedStorage:
-          type: number
-          description: '[bytes] Object storage bucket size. Includes snapshots data. Storage is billed based on this metric.'
-        filespaceSize:
-          type: number
-          description: '[bytes] Filespace size as seen by the operating system.'
-        getRequestCount:
-          type: number
-          description: Number of object storage GET requests since Filespace creation.
-        getDataSize:
-          type: number
-          description: '[bytes] Data read from the object storage since Filespace creation.'
-        putRequestCount:
-          type: number
-          description: Number of object storage PUT requests since Filespace creation.
-        listRequestCount:
-          type: number
-          description: Number of object storage LIST requests since Filespace creation.
-        deleteRequestCount:
-          type: number
-          description: Number of object storage DELETE requests since Filespace creation.
-        putDataSize:
-          type: number
-          description: '[bytes] Data written to the object storage since Filespace creation.'
-    UnprocessableEntity:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 422
-        message:
-          type: string
-    FilespaceStorage:
-      required:
-      - provider
-      properties:
-        owner:
-          type: string
-          enum:
-          - customer
-          - lucidlink
-        provider:
-          type: string
-          enum:
-          - Azure
-          - AWS
-          - AWSGovCloud
-          - Alibaba
-          - GCP
-          - Zadara
-          - Cloudian
-          - DigitalOcean
-          - Wasabi
-          - Scality
-          - Telefonica
-          - Exoscale
-          - Nutanix
-          - Pure
-          - Dell
-          - IBM
-          - Other
-        region:
-          description: Region is dependent on `provider`
-          type: string
-        endpoint:
-          description: Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.
-          type: string
-        bucket:
-          type: string
-          description: Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars.
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
-        message:
-          type: string
   securitySchemes:
     standard:
       type: oauth2

@@ -180,16 +180,6 @@ components:
           example: 404
         message:
           type: string
-    Domain:
-      required:
-      - name
-      properties:
-        id:
-          type: string
-          readOnly: true
-        name:
-          description: Lowercase letters, numbers or hyphens. 3-60 chars.
-          type: string
     Conflict:
       required:
       - status
@@ -209,6 +199,16 @@ components:
           type: number
           example: 400
         message:
+          type: string
+    Domain:
+      required:
+      - name
+      properties:
+        id:
+          type: string
+          readOnly: true
+        name:
+          description: Lowercase letters, numbers or hyphens. 3-60 chars.
           type: string
   securitySchemes:
     standard:
