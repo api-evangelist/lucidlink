@@ -170,16 +170,6 @@ paths:
         required: true
 components:
   schemas:
-    NotFound:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 404
-        message:
-          type: string
     Conflict:
       required:
       - status
@@ -188,16 +178,6 @@ components:
         status:
           type: number
           example: 409
-        message:
-          type: string
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
         message:
           type: string
     Domain:
@@ -209,6 +189,26 @@ components:
           readOnly: true
         name:
           description: Lowercase letters, numbers or hyphens. 3-60 chars.
+          type: string
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
           type: string
   securitySchemes:
     standard:

@@ -113,6 +113,83 @@ components:
           type: number
         expiryYear:
           type: number
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+    Invoice:
+      required:
+      - id
+      - date
+      - lineDescriptions
+      - amountDue
+      - currency
+      - paymentStatus
+      - pdfUrl
+      - periodStart
+      - periodEnd
+      properties:
+        id:
+          type: string
+        date:
+          type: number
+          example: 1549886746000
+        lineDescriptions:
+          type: array
+          items:
+            type: string
+        amountDue:
+          type: number
+        currency:
+          type: string
+        periodStart:
+          type: number
+        periodEnd:
+          type: number
+        paymentStatus:
+          type: string
+          enum:
+          - not_paid
+          - past_due
+          - paid
+          - voided
+        pdfUrl:
+          type: string
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItem'
+    FilespaceUsage:
+      required:
+      - usage
+      - dimension
+      properties:
+        usage:
+          type: number
+          description: Usage amount.
+        dimension:
+          type: string
+          description: Usage dimension. Based on the billing plan package.
+          enum:
+          - ManagedCapacity
+          - FilespaceUsers
     FilespaceLineItem:
       required:
       - filespace
@@ -159,49 +236,6 @@ components:
             usage: 2048
           - dimension: FilespaceUsers
             usage: 10
-    NotFound:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 404
-        message:
-          type: string
-    FilespaceLineItemWithForecast:
-      allOf:
-      - $ref: '#/components/schemas/FilespaceLineItem'
-      - properties:
-          amountDueForecast:
-            description: Filespace amount due forecast
-            type: number
-        required:
-        - amountDueForecast
-    FilespaceUsage:
-      required:
-      - usage
-      - dimension
-      properties:
-        usage:
-          type: number
-          description: Usage amount.
-        dimension:
-          type: string
-          description: Usage dimension. Based on the billing plan package.
-          enum:
-          - ManagedCapacity
-          - FilespaceUsers
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
-        message:
-          type: string
     BillingPeriod:
       required:
       - start
@@ -232,6 +266,15 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/FilespaceLineItemWithForecast'
+    FilespaceLineItemWithForecast:
+      allOf:
+      - $ref: '#/components/schemas/FilespaceLineItem'
+      - properties:
+          amountDueForecast:
+            description: Filespace amount due forecast
+            type: number
+        required:
+        - amountDueForecast
     PaymentDetails:
       properties:
         description:
@@ -240,49 +283,6 @@ components:
           type: string
         card:
           $ref: '#/components/schemas/Card'
-    Invoice:
-      required:
-      - id
-      - date
-      - lineDescriptions
-      - amountDue
-      - currency
-      - paymentStatus
-      - pdfUrl
-      - periodStart
-      - periodEnd
-      properties:
-        id:
-          type: string
-        date:
-          type: number
-          example: 1549886746000
-        lineDescriptions:
-          type: array
-          items:
-            type: string
-        amountDue:
-          type: number
-        currency:
-          type: string
-        periodStart:
-          type: number
-        periodEnd:
-          type: number
-        paymentStatus:
-          type: string
-          enum:
-          - not_paid
-          - past_due
-          - paid
-          - voided
-        pdfUrl:
-          type: string
-        filespaceBreakdown:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/FilespaceLineItem'
   securitySchemes:
     standard:
       type: oauth2
