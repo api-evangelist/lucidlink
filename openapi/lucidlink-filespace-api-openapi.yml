@@ -138,64 +138,6 @@ paths:
                 $ref: '#/components/schemas/NotFound'
 components:
   schemas:
-    FilespaceStorage:
-      required:
-      - provider
-      properties:
-        owner:
-          type: string
-          enum:
-          - customer
-          - lucidlink
-        provider:
-          type: string
-          enum:
-          - Azure
-          - AWS
-          - AWSGovCloud
-          - Alibaba
-          - GCP
-          - Zadara
-          - Cloudian
-          - DigitalOcean
-          - Wasabi
-          - Scality
-          - Telefonica
-          - Exoscale
-          - Nutanix
-          - Pure
-          - Dell
-          - IBM
-          - Other
-        region:
-          description: Region is dependent on `provider`
-          type: string
-        endpoint:
-          description: Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.
-          type: string
-        bucket:
-          type: string
-          description: Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars.
-    NotFound:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 404
-        message:
-          type: string
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
-        message:
-          type: string
     Filespace:
       required:
       - domain
@@ -258,6 +200,16 @@ components:
           allOf:
           - $ref: '#/components/schemas/FilespaceStats'
           readOnly: true
+    UnprocessableEntity:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 422
+        message:
+          type: string
     Conflict:
       required:
       - status
@@ -268,14 +220,62 @@ components:
           example: 409
         message:
           type: string
-    UnprocessableEntity:
+    BadRequest:
       required:
       - status
       - message
       properties:
         status:
           type: number
-          example: 422
+          example: 400
+        message:
+          type: string
+    FilespaceStorage:
+      required:
+      - provider
+      properties:
+        owner:
+          type: string
+          enum:
+          - customer
+          - lucidlink
+        provider:
+          type: string
+          enum:
+          - Azure
+          - AWS
+          - AWSGovCloud
+          - Alibaba
+          - GCP
+          - Zadara
+          - Cloudian
+          - DigitalOcean
+          - Wasabi
+          - Scality
+          - Telefonica
+          - Exoscale
+          - Nutanix
+          - Pure
+          - Dell
+          - IBM
+          - Other
+        region:
+          description: Region is dependent on `provider`
+          type: string
+        endpoint:
+          description: Custom endpoint supported only by `Zadara`, `Cloudian` and `Other` providers.
+          type: string
+        bucket:
+          type: string
+          description: Only lowercase letters, numbers, dots or hyphens. Minimum 3 chars.
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
         message:
           type: string
     FilespaceStats:

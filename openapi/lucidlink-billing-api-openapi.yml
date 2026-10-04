@@ -133,49 +133,15 @@ components:
           example: 400
         message:
           type: string
-    Invoice:
-      required:
-      - id
-      - date
-      - lineDescriptions
-      - amountDue
-      - currency
-      - paymentStatus
-      - pdfUrl
-      - periodStart
-      - periodEnd
-      properties:
-        id:
-          type: string
-        date:
-          type: number
-          example: 1549886746000
-        lineDescriptions:
-          type: array
-          items:
-            type: string
-        amountDue:
-          type: number
-        currency:
-          type: string
-        periodStart:
-          type: number
-        periodEnd:
-          type: number
-        paymentStatus:
-          type: string
-          enum:
-          - not_paid
-          - past_due
-          - paid
-          - voided
-        pdfUrl:
-          type: string
-        filespaceBreakdown:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/FilespaceLineItem'
+    FilespaceLineItemWithForecast:
+      allOf:
+      - $ref: '#/components/schemas/FilespaceLineItem'
+      - properties:
+          amountDueForecast:
+            description: Filespace amount due forecast
+            type: number
+        required:
+        - amountDueForecast
     FilespaceUsage:
       required:
       - usage
@@ -266,15 +232,6 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/FilespaceLineItemWithForecast'
-    FilespaceLineItemWithForecast:
-      allOf:
-      - $ref: '#/components/schemas/FilespaceLineItem'
-      - properties:
-          amountDueForecast:
-            description: Filespace amount due forecast
-            type: number
-        required:
-        - amountDueForecast
     PaymentDetails:
       properties:
         description:
@@ -283,6 +240,49 @@ components:
           type: string
         card:
           $ref: '#/components/schemas/Card'
+    Invoice:
+      required:
+      - id
+      - date
+      - lineDescriptions
+      - amountDue
+      - currency
+      - paymentStatus
+      - pdfUrl
+      - periodStart
+      - periodEnd
+      properties:
+        id:
+          type: string
+        date:
+          type: number
+          example: 1549886746000
+        lineDescriptions:
+          type: array
+          items:
+            type: string
+        amountDue:
+          type: number
+        currency:
+          type: string
+        periodStart:
+          type: number
+        periodEnd:
+          type: number
+        paymentStatus:
+          type: string
+          enum:
+          - not_paid
+          - past_due
+          - paid
+          - voided
+        pdfUrl:
+          type: string
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItem'
   securitySchemes:
     standard:
       type: oauth2

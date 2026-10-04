@@ -180,6 +180,16 @@ components:
           example: 409
         message:
           type: string
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
     Domain:
       required:
       - name
@@ -198,16 +208,6 @@ components:
         status:
           type: number
           example: 404
-        message:
-          type: string
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 400
         message:
           type: string
   securitySchemes:
