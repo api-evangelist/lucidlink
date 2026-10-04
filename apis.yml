@@ -61,7 +61,6 @@ tags:
 - MCP
 - AI Agents
 - Zero-Knowledge Encryption
-- Identity and Access Management
 tags_raw:
 - Company
 - Cloud Storage
@@ -73,7 +72,6 @@ tags_raw:
 - MCP
 - Agentic AI
 - Zero-Knowledge Encryption
-- Identity and Access Management
 apis:
 - name: LucidLink Management API
   description: >-
@@ -181,6 +179,9 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: CapabilityMap
+  url: capabilities/lucidlink-capability-edges.yml
+  name: LucidLink Business Capability Map
 - type: Overlay
   url: overlays/lucidlink-service-api-overlay.yaml
 - type: TrustCenter
@@ -256,3 +257,5 @@ x-enrichment:
   status: enriched
   artifacts_added: 25
   pass: local-v1
+x-tags-removed:
+- Identity and Access Management
