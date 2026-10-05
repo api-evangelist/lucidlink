@@ -1,0 +1,26 @@
+slug: lucidlink
+provider: LucidLink
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 1
+edges:
+- tag: Billing
+  spec_file: lucidlink-billing-api-openapi.yml
+  capability_id: BC-4250
+  capability_id_l1: BC-4250
+  capability_name: Subscription Billing & Revenue Management
+  confidence: 0.8
+  evidence: GET /billing/invoices getInvoices Get a list of issued invoices; PATCH /billing/payment setPaymentDetails;
+    schemas Invoice, BillingPeriod, FilespaceUsage, FilespaceLineItem
+  reason: 'Subscription billing surface for a SaaS service: billing-period usage, invoices with per-filespace
+    line items, and payment-method details — spanning usage metering, invoicing and payment collection,
+    so L1 only.'
