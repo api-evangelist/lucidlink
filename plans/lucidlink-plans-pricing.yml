@@ -112,3 +112,36 @@ programmatic_billing:
     getCurrentPeriod, getInvoices, getInvoiceBreakdownPerFilespace, getPaymentDetails and
     setPaymentDetails, with usage broken down per filespace by the dimensions
     ManagedCapacity and FilespaceUsers.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - metered
+  - seat
+  units:
+  - seat
+  plans:
+  - name: Starter
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Business
+    access: other
+    model: seat
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
+  - name: Enterprise
+    access: other
+    model: metered
+    model_how: derived
+    units:
+    - seat
+    periods:
+    - month
