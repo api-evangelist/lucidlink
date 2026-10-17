@@ -101,47 +101,36 @@ paths:
                 $ref: '#/components/schemas/NotFound'
 components:
   schemas:
-    Card:
+    BillingPeriod:
       required:
-      - numberLast4
-      - expiryMonth
-      - expiryYear
+      - start
+      - end
+      - subscriptionStatus
+      - amountDue
+      - amountDueForecast
+      - currency
       properties:
-        numberLast4:
+        start:
+          type: number
+        end:
+          type: number
+        subscriptionStatus:
           type: string
-        expiryMonth:
+        amountDue:
           type: number
-        expiryYear:
+          description: Amount due to date within the current period in cents.
+        amountDueForecast:
           type: number
-    NotFound:
-      required:
-      - status
-      - message
-      properties:
-        status:
-          type: number
-          example: 404
-        message:
+          description: Forecast amount due to end of period in cents.
+        currency:
           type: string
-    BadRequest:
-      required:
-      - status
-      - message
-      properties:
-        status:
+        trialDays:
           type: number
-          example: 400
-        message:
-          type: string
-    FilespaceLineItemWithForecast:
-      allOf:
-      - $ref: '#/components/schemas/FilespaceLineItem'
-      - properties:
-          amountDueForecast:
-            description: Filespace amount due forecast
-            type: number
-        required:
-        - amountDueForecast
+        filespaceBreakdown:
+          type: array
+          items:
+            type: object
+            $ref: '#/components/schemas/FilespaceLineItemWithForecast'
     FilespaceUsage:
       required:
       - usage
@@ -202,44 +191,6 @@ components:
             usage: 2048
           - dimension: FilespaceUsers
             usage: 10
-    BillingPeriod:
-      required:
-      - start
-      - end
-      - subscriptionStatus
-      - amountDue
-      - amountDueForecast
-      - currency
-      properties:
-        start:
-          type: number
-        end:
-          type: number
-        subscriptionStatus:
-          type: string
-        amountDue:
-          type: number
-          description: Amount due to date within the current period in cents.
-        amountDueForecast:
-          type: number
-          description: Forecast amount due to end of period in cents.
-        currency:
-          type: string
-        trialDays:
-          type: number
-        filespaceBreakdown:
-          type: array
-          items:
-            type: object
-            $ref: '#/components/schemas/FilespaceLineItemWithForecast'
-    PaymentDetails:
-      properties:
-        description:
-          type: string
-        paymentSourceToken:
-          type: string
-        card:
-          $ref: '#/components/schemas/Card'
     Invoice:
       required:
       - id
@@ -283,6 +234,55 @@ components:
           items:
             type: object
             $ref: '#/components/schemas/FilespaceLineItem'
+    NotFound:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 404
+        message:
+          type: string
+    FilespaceLineItemWithForecast:
+      allOf:
+      - $ref: '#/components/schemas/FilespaceLineItem'
+      - properties:
+          amountDueForecast:
+            description: Filespace amount due forecast
+            type: number
+        required:
+        - amountDueForecast
+    BadRequest:
+      required:
+      - status
+      - message
+      properties:
+        status:
+          type: number
+          example: 400
+        message:
+          type: string
+    PaymentDetails:
+      properties:
+        description:
+          type: string
+        paymentSourceToken:
+          type: string
+        card:
+          $ref: '#/components/schemas/Card'
+    Card:
+      required:
+      - numberLast4
+      - expiryMonth
+      - expiryYear
+      properties:
+        numberLast4:
+          type: string
+        expiryMonth:
+          type: number
+        expiryYear:
+          type: number
   securitySchemes:
     standard:
       type: oauth2
