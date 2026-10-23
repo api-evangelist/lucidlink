@@ -73,18 +73,6 @@
     detected: '2026-10-18'
   status: not-a-workflow
   arazzo: null
-- slug: lucidlink-n8n-n8n-community
-  label: n8n (n8n-community)
-  partner: n8n
-  partner_name: n8n (n8n-community)
-  type: marketplace
-  marketplace: n8n-community
-  channel: partner-built
-  evidence: https://www.npmjs.com/package/n8n-nodes-lucidlink
-  source: edge
-  relationship: platform-app
-  status: not-a-workflow
-  arazzo: null
 - slug: lucidlink-dpp-digital-production-partnership
   label: DPP (Digital Production Partnership)
   partner_name: DPP (Digital Production Partnership)
@@ -107,5 +95,43 @@
     detected_by: sweep-film-media-identifiers-eidr.py
     detected: '2026-10-21'
     dpp_category: technology
+  status: not-a-workflow
+  arazzo: null
+- slug: lucidlink-n8n-n8n-community
+  label: n8n (n8n-community)
+  partner: n8n
+  partner_name: n8n (n8n-community)
+  type: marketplace
+  marketplace: n8n-community
+  channel: partner-built
+  evidence: https://www.npmjs.com/package/n8n-nodes-lucidlink
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: lucidlink-adobe-creative-cloud-own
+  label: Adobe Creative Cloud (own)
+  partner: adobe-creative-cloud
+  partner_name: Adobe Creative Cloud (own)
+  category: Adobe Exchange Creative Cloud listing (After Effects, Premiere Pro)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/cc/200528/lucidlink
+  source: edge
+  relationship: platform-app
+  status: not-a-workflow
+  arazzo: null
+- slug: lucidlink-adobe-premiere-pro-own
+  label: Adobe Premiere Pro (own)
+  partner: adobe-premiere
+  partner_name: Adobe Premiere Pro (own)
+  category: Adobe Exchange Creative Cloud listing (After Effects, Premiere Pro)
+  type: marketplace
+  marketplace: own
+  channel: partner-built
+  evidence: https://exchange.adobe.com/apps/cc/200528/lucidlink
+  source: edge
+  relationship: platform-app
   status: not-a-workflow
   arazzo: null
