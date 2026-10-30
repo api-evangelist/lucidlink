@@ -64,20 +64,134 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-LucidLink Corp. is a cloud file-streaming company whose product is a "filespace" — a shared,
-cloud-native filesystem that mounts on macOS, Windows, Linux, iOS and Android and streams only
-the bytes an application actually asks for, so distributed teams can open multi-gigabyte media,
-design and AEC files directly from S3 object storage without syncing or downloading them first.
+LucidLink Corp. is a cloud file-streaming company whose product is a "filespace" — a shared, cloud-native filesystem that mounts on macOS, Windows, Linux, iOS and Android and streams only the bytes an application actually asks for, so distributed teams can open multi-gigabyte media, design and AEC files directly from S3 object storage without syncing or downloading them first. LucidLink is built around a zero-knowledge encryption model in which the customer holds the keys, which shapes its developer surface: the LucidLink Developer Platform ships a public cloud Service API for domain, filespace and billing management (OAuth2 client-credentials, Swagger 2.0 reference published at api.lucidlink.com), a self-hosted Management API delivered as a Docker container so administrative calls never traverse LucidLink infrastructure, a beta Python SDK on PyPI, LucidLink Connect for linking external S3 objects into a filespace, and a beta MCP server that exposes filespace read, write, search, locking and audit operations as tools for MCP-compatible agents.
 
-LucidLink is built around a zero-knowledge encryption model in which the customer holds the keys,
-which shapes its developer surface: a public cloud Service API for domain, filespace and billing
-management (OAuth2 client-credentials, Swagger 2.0 reference published at api.lucidlink.com), a
-self-hosted Management API delivered as a Docker container so administrative calls never traverse
-LucidLink infrastructure, a beta Python SDK on PyPI, LucidLink Connect for linking external S3
-objects into a filespace, and a beta MCP server exposing 47 filespace tools to MCP-compatible agents.
+**Areas:** Company · Cloud Storage · File Streaming · File Collaboration · Media and Entertainment · Object Storage · Developer Platform · MCP · AI Agents · Zero-Knowledge Encryption
 
-- https://www.lucidlink.com/
-- https://www.lucidlink.com/developer-platform
-- https://api.lucidlink.com/docs/api/v1/
-- https://www.lucidlink.com/mcp-server
-- https://github.com/LucidLink
+## LucidLink on APIs.io
+
+Everything profiled for LucidLink is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/lucidlink/](https://apis.io/providers/lucidlink/)** — or go straight to one of the APIs or properties below.
+
+### APIs (5)
+
+- [LucidLink Management API](https://apis.io/apis/lucidlink/lucidlink-management-api/) — The self-hosted administrative REST API for the new LucidLink platform, delivered as the lucidlink/lucidlink-api Docker image and run on customer…
+- [LucidLink Web Service API v2](https://apis.io/apis/lucidlink/lucidlink-web-service-api-v2/) — The LucidLink-hosted workspace web service used by the LucidLink apps and by the admin tool surface of the official LucidLink MCP server. Exposes service…
+- [LucidLink Billing API](https://apis.io/apis/lucidlink/lucidlink-billing-api/) — Billing operations.
+- [LucidLink Domain API](https://apis.io/apis/lucidlink/lucidlink-domain-api/) — Domain operations.
+- [LucidLink Filespace API](https://apis.io/apis/lucidlink/lucidlink-filespace-api/) — Filespace operations.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [LucidLink MCP Server](https://apis.io/servers/lucidlink/lucidlink-mcp-server/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Lucidlink Service Api Overlay](https://apis.io/overlays/lucidlink/lucidlink-service-api-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Lucidlink Authentication](https://apis.io/security/lucidlink/lucidlink-authentication/)
+- [Lucidlink Domain Security](https://apis.io/security/lucidlink/lucidlink-domain-security/)
+- [Lucidlink Trust Center](https://apis.io/security/lucidlink/lucidlink-trust-center/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Lucidlink Scopes](https://apis.io/scopes/lucidlink/lucidlink-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Lucidlink Plans Pricing](https://apis.io/plans/lucidlink/lucidlink-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Lucidlink Rate Limits](https://apis.io/rate-limits/lucidlink/lucidlink-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.lucidlink.com/)
+- [Documentation](https://support.lucidlink.com/hc/en-us/sections/45107391668493-LucidLink-Developer-Platform)
+- [Getting started](https://support.lucidlink.com/hc/en-us/articles/40221700126605-Deployment-Usage-LucidLink-API-Container)
+- [API reference](https://api.lucidlink.com/docs/api/v1/)
+- [Pricing](https://www.lucidlink.com/pricing)
+- [Sign up](https://app.lucidlink.com/register)
+- [Support](https://support.lucidlink.com/hc/en-us)
+- [Changelog](https://support.lucidlink.com/hc/en-us/sections/31125638256269-Release-notes)
+- [Blog](https://www.lucidlink.com/blog)
+- [Compliance](https://trust.lucidlink.com/)
+- [Terms of service](https://www.lucidlink.com/terms)
+- [Privacy policy](https://www.lucidlink.com/privacy)
+- [GitHub](https://github.com/LucidLink)
+- [Status](https://status.lucidlink.com/)
+
+## API Evangelist rating
+
+**Kin Score 58.4** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 71.7 |
+| Contract quality | 43.3 |
+| Contract governance | 18.2 |
+| Operational transparency | 34.2 |
+| Developer ergonomics | 80.4 |
+| Access clarity | 77.6 |
+
+**Agent readiness 31.3** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | negotiable (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | — |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/lucidlink/](https://apis.io/providers/lucidlink/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for LucidLink: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/lucidlink/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
